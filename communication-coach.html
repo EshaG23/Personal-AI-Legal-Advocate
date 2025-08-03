@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication Coach - Personal AI Legal Advocate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #1e293b;
+            border-right: 1px solid #334155;
+            padding: 1rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background-color: #334155;
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: #1e40af;
+            color: white;
+            border-left-color: #06b6d4;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            fill: currentColor;
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            background-color: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.75rem;
+        }
+
+        .header p {
+            color: #94a3b8;
+        }
+
+        /* Scenario Selection */
+        .scenario-selection {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .scenario-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .scenario-card:hover {
+            background-color: #334155;
+            border-color: #06b6d4;
+            transform: translateY(-2px);
+        }
+
+        .scenario-card.selected {
+            background-color: #1e40af;
+            border-color: #06b6d4;
+        }
+
+        .scenario-icon {
+            width: 32px;
+            height: 32px;
+            fill: #06b6d4;
+            margin-bottom: 1rem;
+        }
+
+        .scenario-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .scenario-description {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .scenario-difficulty {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }
+
+        .difficulty-beginner {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .difficulty-intermediate {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .difficulty-advanced {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            fill: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            max-width: 400px;
+        }
+
+        /* Coaching Session */
+        .coaching-session {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .coaching-session.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .session-header {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .session-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .session-subtitle {
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        .session-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background-color: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #06b6d4;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        /* Coaching Content */
+        .coaching-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .content-section {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .content-icon {
+            width: 20px;
+            height: 20px;
+            fill: #06b6d4;
+            margin-right: 0.75rem;
+        }
+
+        .content-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .talking-points {
+            list-style: none;
+        }
+
+        .talking-point {
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid #06b6d4;
+        }
+
+        .point-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .point-description {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .point-example {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-style: italic;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: rgba(6, 182, 212, 0.1);
+            border-radius: 0.25rem;
+        }
+
+        /* Practice Session */
+        .practice-session {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .practice-question {
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .question-context {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        .practice-input {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: white;
+            font-family: inherit;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 1rem;
+        }
+
+        .practice-input:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .practice-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .practice-btn {
+            background-color: #06b6d4;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .practice-btn:hover {
+            background-color: #0891b2;
+        }
+
+        .practice-btn:disabled {
+            background-color: #374151;
+            cursor: not-allowed;
+        }
+
+        .practice-btn.secondary {
+            background-color: #374151;
+            color: #d1d5db;
+        }
+
+        .practice-btn.secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            margin-right: 0.5rem;
+        }
+
+        /* Feedback Section */
+        .feedback-section {
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid #10b981;
+            display: none;
+        }
+
+        .feedback-section.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .feedback-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .feedback-icon {
+            width: 16px;
+            height: 16px;
+            fill: #10b981;
+            margin-right: 0.5rem;
+        }
+
+        .feedback-content {
+            color: #d1d5db;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-suggestions {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-radius: 0.25rem;
+            padding: 0.75rem;
+        }
+
+        .suggestions-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #10b981;
+        }
+
+        .suggestions-list {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .back-btn {
+            background-color: #374151;
+            color: #d1d5db;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn:hover {
+            background-color: #4b5563;
+        }
+
+        .next-btn {
+            background-color: #06b6d4;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .next-btn:hover {
+            background-color: #0891b2;
+        }
+
+        .next-btn:disabled {
+            background-color: #374151;
+            cursor: not-allowed;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #374151;
+            border-top: 2px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+
+            .scenario-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .coaching-content {
+                grid-template-columns: 1fr;
+            }
+
+            .practice-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7V9C15 10.1 15.9 11 17 11V20C17 21.1 16.1 22 15 22H9C7.9 22 7 21.1 7 20V11C8.1 11 9 10.1 9 9V7H3V9C3 10.1 3.9 11 5 11V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V11C20.1 11 21 10.1 21 9Z"/>
+                </svg>
+                <span class="logo-text">PALA</span>
+            </div>
+
+            <a href="dashboard.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="ai-chat-advocate.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                AI Chat Advocate
+            </a>
+
+            <a href="case-details-with-summary.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Case Details
+            </a>
+
+            <a href="case-timeline.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                Case Timeline
+            </a>
+
+            <a href="strategy-risks.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                </svg>
+                Strategy & Risks
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Document Assistant
+            </a>
+
+            <a href="communication-coach.html" class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                Communication Coach
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                Private Journal
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47z"/>
+                </svg>
+                Resource Finder
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1>
+                    <svg class="header-icon" viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                    </svg>
+                    Communication Coach
+                </h1>
+                <p>Prepare for important conversations with AI-powered guidance.</p>
+            </div>
+
+            <!-- Scenario Selection -->
+            <div class="scenario-selection" id="scenarioSelection">
+                <h2 class="section-title">Select a scenario to prepare for</h2>
+                <div class="scenario-grid">
+                    <div class="scenario-card" onclick="selectScenario('deposition')">
+                        <span class="scenario-difficulty difficulty-advanced">Advanced</span>
+                        <svg class="scenario-icon" viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        </svg>
+                        <div class="scenario-title">Preparing for a Deposition</div>
+                        <div class="scenario-description">Learn how to answer questions clearly, handle difficult inquiries, and maintain composure during depositions.</div>
+                    </div>
+
+                    <div class="scenario-card" onclick="selectScenario('lawyer-meeting')">
+                        <span class="scenario-difficulty difficulty-beginner">Beginner</span>
+                        <svg class="scenario-icon" viewBox="0 0 24 24">
+                            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.996 2.996 0 0 0 17.06 6H16c-.8 0-1.54.37-2.01.99L12 9l-1.99-2.01A2.99 2.99 0 0 0 8 6H6.94c-1.4 0-2.59.93-2.9 2.37L1.5 16H4v6h2v-6h2.5l1.5-4.5L12 14l1.5-2.5L15 16h2.5v6h2z"/>
+                        </svg>
+                        <div class="scenario-title">First Meeting with Your Lawyer</div>
+                        <div class="scenario-description">Make the most of your initial consultation by preparing the right questions and organizing your information effectively.</div>
+                    </div>
+
+                    <div class="scenario-card" onclick="selectScenario('settlement')">
+                        <span class="scenario-difficulty difficulty-intermediate">Intermediate</span>
+                        <svg class="scenario-icon" viewBox="0 0 24 24">
+                            <path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                        </svg>
+                        <div class="scenario-title">Negotiating a Settlement</div>
+                        <div class="scenario-description">Develop negotiation strategies, understand your bottom line, and communicate effectively during settlement discussions.</div>
+                    </div>
+
+                    <div class="scenario-card" onclick="selectScenario('court-testimony')">
+                        <span class="scenario-difficulty difficulty-advanced">Advanced</span>
+                        <svg class="scenario-icon" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <div class="scenario-title">Preparing for Court Testimony</div>
+                        <div class="scenario-description">Master the art of clear, credible testimony while handling cross-examination and maintaining your composure in court.</div>
+                    </div>
+
+                    <div class="scenario-card" onclick="selectScenario('family-discussion')">
+                        <span class="scenario-difficulty difficulty-beginner">Beginner</span>
+                        <svg class="scenario-icon" viewBox="0 0 24 24">
+                            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.996 2.996 0 0 0 17.06 6H16c-.8 0-1.54.37-2.01.99L12 9l-1.99-2.01A2.99 2.99 0 0 0 8 6H6.94c-1.4 0-2.59.93-2.9 2.37L1.5 16H4v6h2v-6h2.5l1.5-4.5L12 14l1.5-2.5L15 16h2.5v6h2z"/>
+                        </svg>
+                        <div class="scenario-title">Discussing the Case with Family</div>
+                        <div class="scenario-description">Learn how to explain your legal situation to family members while managing emotions and expectations.</div>
+                    </div>
+
+                    <div class="scenario-card" onclick="selectScenario('mediation')">
+                        <span class="scenario-difficulty difficulty-intermediate">Intermediate</span>
+                        <svg class="scenario-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <div class="scenario-title">Mediation Session</div>
+                        <div class="scenario-description">Prepare for mediation by understanding the process, developing compromise strategies, and communicating your interests effectively.</div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                    </svg>
+                    <h2>Ready to prepare?</h2>
+                    <p>Select a scenario above to get personalized talking points and strategies.</p>
+                </div>
+            </div>
+
+            <!-- Coaching Session -->
+            <div class="coaching-session" id="coachingSession">
+                <!-- Session Header -->
+                <div class="session-header">
+                    <div class="session-title" id="sessionTitle">Preparing for a Deposition</div>
+                    <div class="session-subtitle" id="sessionSubtitle">Master the fundamentals of deposition testimony</div>
+                    <div class="session-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">Step 1 of 4</div>
+                    </div>
+                </div>
+
+                <!-- Coaching Content -->
+                <div class="coaching-content">
+                    <!-- Talking Points -->
+                    <div class="content-section">
+                        <div class="content-header">
+                            <svg class="content-icon" viewBox="0 0 24 24">
+                                <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                            </svg>
+                            <div class="content-title">Key Talking Points</div>
+                        </div>
+                        <ul class="talking-points" id="talkingPoints">
+                            <!-- Talking points will be populated here -->
+                        </ul>
+                    </div>
+
+                    <!-- Do's and Don'ts -->
+                    <div class="content-section">
+                        <div class="content-header">
+                            <svg class="content-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <div class="content-title">Do's and Don'ts</div>
+                        </div>
+                        <ul class="talking-points" id="dosAndDonts">
+                            <!-- Do's and don'ts will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Practice Session -->
+                <div class="practice-session">
+                    <div class="content-header">
+                        <svg class="content-icon" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <div class="content-title">Practice Session</div>
+                    </div>
+                    
+                    <div class="practice-question" id="practiceQuestion">
+                        <div class="question-text">How would you respond to this question?</div>
+                        <div class="question-context">"Can you tell me exactly what happened on the day in question?"</div>
+                    </div>
+
+                    <textarea 
+                        class="practice-input" 
+                        id="practiceInput"
+                        placeholder="Type your response here. Focus on being clear, concise, and truthful..."
+                    ></textarea>
+
+                    <div class="practice-buttons">
+                        <button class="practice-btn" onclick="getFeedback()">
+                            <svg class="btn-icon" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            Get AI Feedback
+                        </button>
+                        <button class="practice-btn secondary" onclick="nextQuestion()">
+                            <svg class="btn-icon" viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                            </svg>
+                            Next Question
+                        </button>
+                    </div>
+
+                    <div class="feedback-section" id="feedbackSection">
+                        <div class="feedback-title">
+                            <svg class="feedback-icon" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            AI Feedback
+                        </div>
+                        <div class="feedback-content" id="feedbackContent">
+                            <!-- Feedback will be populated here -->
+                        </div>
+                        <div class="feedback-suggestions">
+                            <div class="suggestions-title">Suggestions for Improvement:</div>
+                            <div class="suggestions-list" id="suggestionsList">
+                                <!-- Suggestions will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="back-btn" onclick="goBackToScenarios()">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                        </svg>
+                        Back to Scenarios
+                    </button>
+                    <button class="next-btn" onclick="nextStep()" id="nextStepBtn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                        </svg>
+                        Next Step
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Coaching scenarios data
+        const scenarios = {
+            'deposition': {
+                title: 'Preparing for a Deposition',
+                subtitle: 'Master the fundamentals of deposition testimony',
+                talkingPoints: [
+                    {
+                        title: 'Listen Carefully to Each Question',
+                        description: 'Take time to fully understand what is being asked before responding. Ask for clarification if needed.',
+                        example: 'Example: "Could you please repeat the question?" or "I want to make sure I understand what you\'re asking."'
+                    },
+                    {
+                        title: 'Answer Only What is Asked',
+                        description: 'Provide direct, truthful answers without volunteering additional information that wasn\'t requested.',
+                        example: 'Example: If asked "What time did you arrive?", answer "3:30 PM" rather than explaining your entire journey.'
+                    },
+                    {
+                        title: 'It\'s Okay to Say "I Don\'t Know"',
+                        description: 'If you don\'t remember or don\'t know something, it\'s perfectly acceptable to say so.',
+                        example: 'Example: "I don\'t recall the exact date" or "I don\'t have knowledge about that."'
+                    },
+                    {
+                        title: 'Stay Calm and Professional',
+                        description: 'Maintain composure even if questions become aggressive or repetitive. Take breaks if needed.',
+                        example: 'Example: Take a deep breath, pause before answering, and speak in a measured tone.'
+                    }
+                ],
+                dosAndDonts: [
+                    {
+                        title: 'DO: Tell the Truth',
+                        description: 'Always be honest in your testimony. Lying under oath is perjury and can have serious legal consequences.',
+                        example: 'Remember: Your credibility is your most valuable asset in legal proceedings.'
+                    },
+                    {
+                        title: 'DON\'T: Guess or Speculate',
+                        description: 'If you\'re not certain about something, don\'t guess. It\'s better to admit uncertainty.',
+                        example: 'Say: "I\'m not certain about that" rather than making an educated guess.'
+                    },
+                    {
+                        title: 'DO: Review Documents Carefully',
+                        description: 'When shown documents, take time to read them thoroughly before answering questions about them.',
+                        example: 'Ask: "May I have a moment to review this document?" if you need more time.'
+                    },
+                    {
+                        title: 'DON\'T: Argue with the Attorney',
+                        description: 'Remain professional even if you disagree with the line of questioning or feel attacked.',
+                        example: 'Stay focused on answering questions rather than defending your position.'
+                    }
+                ],
+                questions: [
+                    {
+                        question: "Can you tell me exactly what happened on the day in question?",
+                        context: "This is a common opening question in depositions. Focus on providing a clear, chronological account."
+                    },
+                    {
+                        question: "Are you taking any medications that might affect your memory or judgment?",
+                        context: "This question tests your mental capacity to testify. Answer honestly about any medications."
+                    },
+                    {
+                        question: "Have you discussed this case with anyone before today?",
+                        context: "This explores potential coaching or bias. Be honest about conversations with your attorney."
+                    }
+                ]
+            },
+            'lawyer-meeting': {
+                title: 'First Meeting with Your Lawyer',
+                subtitle: 'Make the most of your initial consultation',
+                talkingPoints: [
+                    {
+                        title: 'Prepare Your Questions in Advance',
+                        description: 'Write down all questions you want to ask about your case, the legal process, and fees.',
+                        example: 'Example: "What are my chances of success?", "How long will this take?", "What are the potential costs?"'
+                    },
+                    {
+                        title: 'Organize Your Documents',
+                        description: 'Bring all relevant documents organized chronologically with a summary of key events.',
+                        example: 'Example: Contracts, correspondence, receipts, photos, and a timeline of events.'
+                    },
+                    {
+                        title: 'Be Completely Honest',
+                        description: 'Share all relevant information, even if it might hurt your case. Your lawyer needs the full picture.',
+                        example: 'Example: Disclose any prior legal issues, potential witnesses, or unfavorable facts.'
+                    },
+                    {
+                        title: 'Understand the Fee Structure',
+                        description: 'Clarify how you will be charged, what services are included, and what additional costs to expect.',
+                        example: 'Example: Hourly rates, retainer fees, court costs, and payment schedules.'
+                    }
+                ],
+                dosAndDonts: [
+                    {
+                        title: 'DO: Take Notes',
+                        description: 'Write down important advice, next steps, and deadlines during your meeting.',
+                        example: 'Bring a notebook and pen to record key information and action items.'
+                    },
+                    {
+                        title: 'DON\'T: Withhold Information',
+                        description: 'Don\'t hide potentially damaging information. Your lawyer needs to know everything to represent you effectively.',
+                        example: 'Attorney-client privilege protects your communications, so be completely open.'
+                    },
+                    {
+                        title: 'DO: Ask About Communication',
+                        description: 'Establish how and when you\'ll communicate, and what updates you can expect.',
+                        example: 'Ask: "How often will you update me?" and "What\'s the best way to reach you?"'
+                    },
+                    {
+                        title: 'DON\'T: Rush the Decision',
+                        description: 'Take time to consider the lawyer\'s advice and fee structure before signing any agreements.',
+                        example: 'It\'s okay to say: "I\'d like to think about this and get back to you."'
+                    }
+                ],
+                questions: [
+                    {
+                        question: "What is your assessment of my case based on what I've told you?",
+                        context: "This helps you understand the lawyer's initial impression and potential strategies."
+                    },
+                    {
+                        question: "What information or documents do you need from me next?",
+                        context: "Understanding next steps helps you prepare and move your case forward efficiently."
+                    },
+                    {
+                        question: "How do you typically communicate with clients during a case?",
+                        context: "Setting communication expectations prevents misunderstandings later."
+                    }
+                ]
+            },
+            'settlement': {
+                title: 'Negotiating a Settlement',
+                subtitle: 'Develop effective negotiation strategies',
+                talkingPoints: [
+                    {
+                        title: 'Know Your Bottom Line',
+                        description: 'Determine the minimum acceptable settlement before negotiations begin. Don\'t reveal this number.',
+                        example: 'Example: If your minimum is $50,000, you might start negotiations at $80,000.'
+                    },
+                    {
+                        title: 'Understand the Other Party\'s Position',
+                        description: 'Research their motivations, constraints, and potential costs of going to trial.',
+                        example: 'Example: Consider their insurance limits, business reputation concerns, or time constraints.'
+                    },
+                    {
+                        title: 'Present Facts, Not Emotions',
+                        description: 'Base your arguments on evidence, legal precedents, and factual damages rather than emotional appeals.',
+                        example: 'Example: "Medical bills total $25,000" rather than "I\'ve suffered tremendously."'
+                    },
+                    {
+                        title: 'Be Prepared to Walk Away',
+                        description: 'Show that you\'re willing to go to trial if a fair settlement isn\'t reached.',
+                        example: 'Example: "While I prefer to settle, I\'m prepared to let a jury decide if necessary."'
+                    }
+                ],
+                dosAndDonts: [
+                    {
+                        title: 'DO: Document Everything',
+                        description: 'Keep detailed records of all settlement discussions and offers made.',
+                        example: 'Follow up verbal discussions with written summaries sent to all parties.'
+                    },
+                    {
+                        title: 'DON\'T: Accept the First Offer',
+                        description: 'Initial offers are typically low. Expect to negotiate back and forth several times.',
+                        example: 'Counter with a reasonable but higher amount, explaining your reasoning.'
+                    },
+                    {
+                        title: 'DO: Consider Non-Monetary Terms',
+                        description: 'Sometimes non-cash benefits can be valuable parts of a settlement.',
+                        example: 'Examples: Apologies, policy changes, recommendations, or future business relationships.'
+                    },
+                    {
+                        title: 'DON\'T: Negotiate When Emotional',
+                        description: 'Take breaks if discussions become heated. Make decisions with a clear head.',
+                        example: 'Say: "Let me think about this overnight and get back to you tomorrow."'
+                    }
+                ],
+                questions: [
+                    {
+                        question: "What is your client's best offer to resolve this matter?",
+                        context: "This opens settlement discussions and gauges the other party's starting position."
+                    },
+                    {
+                        question: "Can you help me understand the reasoning behind this offer?",
+                        context: "Understanding their logic helps you craft more effective counter-arguments."
+                    },
+                    {
+                        question: "What would it take to get this resolved today?",
+                        context: "This can reveal their true bottom line and willingness to close quickly."
+                    }
+                ]
+            },
+            'court-testimony': {
+                title: 'Preparing for Court Testimony',
+                subtitle: 'Master the art of clear, credible testimony',
+                talkingPoints: [
+                    {
+                        title: 'Dress Professionally and Appropriately',
+                        description: 'Your appearance affects credibility. Dress as you would for an important business meeting.',
+                        example: 'Example: Conservative business attire, minimal jewelry, well-groomed appearance.'
+                    },
+                    {
+                        title: 'Speak Clearly and Loudly Enough',
+                        description: 'Ensure the judge, jury, and court reporter can hear and understand your testimony.',
+                        example: 'Example: Face the jury when answering, speak slowly, and pause between sentences.'
+                    },
+                    {
+                        title: 'Answer "Yes" or "No" When Possible',
+                        description: 'Give direct answers to direct questions. Elaborate only when asked or when necessary for clarity.',
+                        example: 'Example: If asked "Were you there?", answer "Yes" rather than explaining why you were there.'
+                    },
+                    {
+                        title: 'Maintain Eye Contact and Good Posture',
+                        description: 'Project confidence and honesty through your body language and demeanor.',
+                        example: 'Example: Sit up straight, keep hands visible, and look at the person asking questions.'
+                    }
+                ],
+                dosAndDonts: [
+                    {
+                        title: 'DO: Listen to the Entire Question',
+                        description: 'Wait for the complete question before answering. Don\'t interrupt or anticipate.',
+                        example: 'Pause after the question ends to ensure you understand what\'s being asked.'
+                    },
+                    {
+                        title: 'DON\'T: Memorize Your Testimony',
+                        description: 'Rehearsed answers sound unnatural. Know the facts, but speak naturally.',
+                        example: 'Review key facts and dates, but let your testimony flow conversationally.'
+                    },
+                    {
+                        title: 'DO: Admit When You Don\'t Remember',
+                        description: 'It\'s better to admit uncertainty than to guess or make up details.',
+                        example: 'Say: "I don\'t recall the exact time" rather than guessing "around 3 PM."'
+                    },
+                    {
+                        title: 'DON\'T: Argue with the Attorneys',
+                        description: 'Stay calm and professional even during aggressive cross-examination.',
+                        example: 'Answer questions directly without becoming defensive or argumentative.'
+                    }
+                ],
+                questions: [
+                    {
+                        question: "Please state your name and address for the record.",
+                        context: "This is typically the first question. Speak clearly and spell your name if it's unusual."
+                    },
+                    {
+                        question: "Isn't it true that you never actually saw what happened?",
+                        context: "This is a leading question designed to limit your answer. Be precise about what you did and didn't see."
+                    },
+                    {
+                        question: "How can you be so certain about the time when this happened months ago?",
+                        context: "This challenges your memory. Explain any specific reasons you remember the time clearly."
+                    }
+                ]
+            },
+            'family-discussion': {
+                title: 'Discussing the Case with Family',
+                subtitle: 'Manage emotions and expectations effectively',
+                talkingPoints: [
+                    {
+                        title: 'Choose the Right Time and Place',
+                        description: 'Have important discussions when everyone is calm and in a private, comfortable setting.',
+                        example: 'Example: After dinner when children are occupied, in your living room without distractions.'
+                    },
+                    {
+                        title: 'Explain in Simple Terms',
+                        description: 'Use language appropriate for your audience. Avoid legal jargon that might confuse or worry family members.',
+                        example: 'Example: "We\'re working with a lawyer to solve a problem" rather than complex legal details.'
+                    },
+                    {
+                        title: 'Be Honest About Uncertainties',
+                        description: 'Acknowledge that legal cases have uncertain outcomes and timelines.',
+                        example: 'Example: "We don\'t know exactly how long this will take, but we\'re doing everything we can."'
+                    },
+                    {
+                        title: 'Focus on What You\'re Doing to Handle It',
+                        description: 'Emphasize the positive steps you\'re taking rather than dwelling on problems.',
+                        example: 'Example: "We have a good lawyer helping us" and "We\'re gathering all the information we need."'
+                    }
+                ],
+                dosAndDonts: [
+                    {
+                        title: 'DO: Reassure About Family Security',
+                        description: 'Address concerns about how the legal case might affect the family\'s stability.',
+                        example: 'Explain: "This won\'t change our daily life" or "We have enough savings to handle this."'
+                    },
+                    {
+                        title: 'DON\'T: Share Inappropriate Details',
+                        description: 'Protect children and sensitive family members from disturbing or complex details.',
+                        example: 'Keep discussions age-appropriate and avoid graphic or frightening information.'
+                    },
+                    {
+                        title: 'DO: Ask for Their Support',
+                        description: 'Let family members know how they can help and what you need from them.',
+                        example: 'Ask: "Can you help me organize these documents?" or "I need your patience during this time."'
+                    },
+                    {
+                        title: 'DON\'T: Make Promises You Can\'t Keep',
+                        description: 'Avoid guaranteeing specific outcomes or timelines that are beyond your control.',
+                        example: 'Say: "We\'re hopeful" rather than "Everything will definitely be fine."'
+                    }
+                ],
+                questions: [
+                    {
+                        question: "How will this affect our family financially?",
+                        context: "Address practical concerns about legal costs and potential financial impact."
+                    },
+                    {
+                        question: "Should we tell the children about this?",
+                        context: "Discuss age-appropriate ways to inform children without causing unnecessary worry."
+                    },
+                    {
+                        question: "What can we do to help you through this?",
+                        context: "This shows family support. Be specific about what help you need."
+                    }
+                ]
+            },
+            'mediation': {
+                title: 'Mediation Session',
+                subtitle: 'Navigate mediation effectively',
+                talkingPoints: [
+                    {
+                        title: 'Understand the Mediator\'s Role',
+                        description: 'The mediator is neutral and helps facilitate discussion, but doesn\'t make decisions for you.',
+                        example: 'Example: The mediator will help you communicate but won\'t judge who is right or wrong.'
+                    },
+                    {
+                        title: 'Come Prepared with Options',
+                        description: 'Think of multiple potential solutions before the session begins.',
+                        example: 'Example: Different payment schedules, alternative forms of compensation, or modified agreements.'
+                    },
+                    {
+                        title: 'Listen Actively to the Other Party',
+                        description: 'Understanding their concerns and interests can help you find mutually acceptable solutions.',
+                        example: 'Example: Ask clarifying questions and acknowledge their perspective even if you disagree.'
+                    },
+                    {
+                        title: 'Focus on Interests, Not Positions',
+                        description: 'Discuss what you need and why, rather than just stating what you want.',
+                        example: 'Example: "I need financial security" rather than "I want $50,000."'
+                    }
+                ],
+                dosAndDonts: [
+                    {
+                        title: 'DO: Stay Open to Creative Solutions',
+                        description: 'Mediation often produces solutions that wouldn\'t be available in court.',
+                        example: 'Consider non-monetary solutions, future arrangements, or modified relationships.'
+                    },
+                    {
+                        title: 'DON\'T: Make Ultimatums',
+                        description: 'Avoid "take it or leave it" statements that shut down productive discussion.',
+                        example: 'Instead of ultimatums, explain your concerns and ask for alternatives.'
+                    },
+                    {
+                        title: 'DO: Take Breaks When Needed',
+                        description: 'If emotions run high or you need to think, ask for a break.',
+                        example: 'Say: "Could we take a 10-minute break so I can consider this proposal?"'
+                    },
+                    {
+                        title: 'DON\'T: Agree to Something You Don\'t Understand',
+                        description: 'Make sure you fully understand any agreement before committing to it.',
+                        example: 'Ask: "Can you explain exactly what this means?" or "What happens if...?"'
+                    }
+                ],
+                questions: [
+                    {
+                        question: "What are your main concerns about this situation?",
+                        context: "This helps identify the core issues that need to be addressed in mediation."
+                    },
+                    {
+                        question: "What would an ideal resolution look like for you?",
+                        context: "Understanding everyone's ideal outcome helps find common ground."
+                    },
+                    {
+                        question: "Are there any options we haven't considered yet?",
+                        context: "This encourages creative problem-solving and new approaches."
+                    }
+                ]
+            }
+        };
+
+        let currentScenario = null;
+        let currentStep = 0;
+        let currentQuestionIndex = 0;
+
+        // Select a scenario
+        function selectScenario(scenarioId) {
+            currentScenario = scenarioId;
+            currentStep = 0;
+            currentQuestionIndex = 0;
+            
+            // Hide scenario selection
+            document.getElementById('scenarioSelection').style.display = 'none';
+            
+            // Show coaching session
+            const coachingSession = document.getElementById('coachingSession');
+            coachingSession.classList.add('show');
+            
+            // Load scenario content
+            loadScenarioContent();
+        }
+
+        // Load scenario content
+        function loadScenarioContent() {
+            const scenario = scenarios[currentScenario];
+            
+            // Update header
+            document.getElementById('sessionTitle').textContent = scenario.title;
+            document.getElementById('sessionSubtitle').textContent = scenario.subtitle;
+            
+            // Update progress
+            updateProgress();
+            
+            // Load talking points
+            loadTalkingPoints(scenario.talkingPoints);
+            
+            // Load do's and don'ts
+            loadDosAndDonts(scenario.dosAndDonts);
+            
+            // Load first practice question
+            loadPracticeQuestion();
+        }
+
+        // Load talking points
+        function loadTalkingPoints(points) {
+            const container = document.getElementById('talkingPoints');
+            container.innerHTML = '';
+            
+            points.forEach(point => {
+                const li = document.createElement('li');
+                li.className = 'talking-point';
+                li.innerHTML = `
+                    <div class="point-title">${point.title}</div>
+                    <div class="point-description">${point.description}</div>
+                    <div class="point-example">${point.example}</div>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        // Load do's and don'ts
+        function loadDosAndDonts(items) {
+            const container = document.getElementById('dosAndDonts');
+            container.innerHTML = '';
+            
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'talking-point';
+                li.innerHTML = `
+                    <div class="point-title">${item.title}</div>
+                    <div class="point-description">${item.description}</div>
+                    <div class="point-example">${item.example}</div>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        // Load practice question
+        function loadPracticeQuestion() {
+            const scenario = scenarios[currentScenario];
+            const question = scenario.questions[currentQuestionIndex];
+            
+            document.querySelector('.question-text').textContent = question.question;
+            document.querySelector('.question-context').textContent = question.context;
+            document.getElementById('practiceInput').value = '';
+            document.getElementById('feedbackSection').classList.remove('show');
+        }
+
+        // Get AI feedback on practice response
+        function getFeedback() {
+            const input = document.getElementById('practiceInput').value.trim();
+            if (!input) {
+                alert('Please enter a response first.');
+                return;
+            }
+
+            const feedbackBtn = document.querySelector('.practice-btn');
+            feedbackBtn.disabled = true;
+            feedbackBtn.innerHTML = '<div class="loading-spinner"></div>Analyzing...';
+
+            // Simulate AI analysis
+            setTimeout(() => {
+                const feedback = generateFeedback(input);
+                displayFeedback(feedback);
+                
+                feedbackBtn.disabled = false;
+                feedbackBtn.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Get AI Feedback';
+            }, 2000);
+        }
+
+        // Generate AI feedback based on response
+        function generateFeedback(response) {
+            const scenario = scenarios[currentScenario];
+            const feedbacks = {
+                'deposition': {
+                    content: "Your response shows good structure and honesty. You provided a clear chronological account without speculation, which is excellent for deposition testimony.",
+                    suggestions: [
+                        "Consider being more specific about times and locations when you remember them clearly",
+                        "Use phrases like 'to the best of my recollection' when you're not completely certain",
+                        "Keep your answers concise - avoid unnecessary details that weren't asked for"
+                    ]
+                },
+                'lawyer-meeting': {
+                    content: "You've prepared well for this consultation. Your questions show you understand the importance of getting comprehensive information about your case.",
+                    suggestions: [
+                        "Don't forget to ask about the lawyer's experience with similar cases",
+                        "Inquire about potential alternative dispute resolution options",
+                        "Make sure to understand all fee arrangements before signing any agreement"
+                    ]
+                },
+                'settlement': {
+                    content: "Your negotiation approach demonstrates good preparation and understanding of your position. You're focusing on facts rather than emotions.",
+                    suggestions: [
+                        "Consider what non-monetary terms might be valuable to you",
+                        "Research the other party's constraints and motivations more thoroughly",
+                        "Prepare multiple settlement scenarios with different terms"
+                    ]
+                },
+                'court-testimony': {
+                    content: "Your testimony style is clear and direct. You're answering the question asked without volunteering extra information, which is appropriate for court.",
+                    suggestions: [
+                        "Remember to pause briefly before answering to ensure you understand the question",
+                        "Speak slightly slower to ensure the court reporter can capture everything",
+                        "Maintain eye contact with the jury when giving important answers"
+                    ]
+                },
+                'family-discussion': {
+                    content: "You're handling this family conversation with appropriate sensitivity. You're being honest while considering your family members' emotional needs.",
+                    suggestions: [
+                        "Consider preparing simple explanations for different age groups in your family",
+                        "Think about specific ways family members can support you during this time",
+                        "Plan follow-up conversations as the situation develops"
+                    ]
+                },
+                'mediation': {
+                    content: "Your approach to mediation shows good understanding of the collaborative process. You're focusing on interests rather than just positions.",
+                    suggestions: [
+                        "Prepare multiple creative solutions before the session",
+                        "Practice active listening techniques to better understand the other party",
+                        "Consider what you're willing to give up to get what you most need"
+                    ]
+                }
+            };
+
+            return feedbacks[currentScenario] || feedbacks['deposition'];
+        }
+
+        // Display feedback
+        function displayFeedback(feedback) {
+            document.getElementById('feedbackContent').textContent = feedback.content;
+            
+            const suggestionsList = document.getElementById('suggestionsList');
+            suggestionsList.innerHTML = feedback.suggestions.map(suggestion => 
+                `• ${suggestion}`
+            ).join('<br>');
+            
+            document.getElementById('feedbackSection').classList.add('show');
+        }
+
+        // Move to next practice question
+        function nextQuestion() {
+            const scenario = scenarios[currentScenario];
+            currentQuestionIndex = (currentQuestionIndex + 1) % scenario.questions.length;
+            loadPracticeQuestion();
+        }
+
+        // Update progress indicator
+        function updateProgress() {
+            const totalSteps = 4;
+            const progress = ((currentStep + 1) / totalSteps) * 100;
+            
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Step ${currentStep + 1} of ${totalSteps}`;
+        }
+
+        // Go to next step
+        function nextStep() {
+            currentStep++;
+            if (currentStep >= 4) {
+                // Complete the session
+                completeSession();
+            } else {
+                updateProgress();
+                // You could add different content for different steps here
+            }
+        }
+
+        // Complete the coaching session
+        function completeSession() {
+            alert('Congratulations! You\'ve completed this coaching session. You\'re now better prepared for this scenario.');
+            goBackToScenarios();
+        }
+
+        // Go back to scenario selection
+        function goBackToScenarios() {
+            document.getElementById('coachingSession').classList.remove('show');
+            document.getElementById('scenarioSelection').style.display = 'block';
+            
+            // Reset selected scenario cards
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            currentScenario = null;
+            currentStep = 0;
+            currentQuestionIndex = 0;
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Any initialization code can go here
+        });
+    </script>
+</body>
+</html>

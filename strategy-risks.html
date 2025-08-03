@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategy & Risk Analysis - Personal AI Legal Advocate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #1e293b;
+            border-right: 1px solid #334155;
+            padding: 1rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background-color: #334155;
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: #1e40af;
+            color: white;
+            border-left-color: #06b6d4;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            fill: currentColor;
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            background-color: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .header-content h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.75rem;
+        }
+
+        .header-content p {
+            color: #94a3b8;
+        }
+
+        .analyze-btn {
+            background-color: #06b6d4;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .analyze-btn:hover {
+            background-color: #0891b2;
+            transform: translateY(-1px);
+        }
+
+        .analyze-btn:disabled {
+            background-color: #374151;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            margin-right: 0.5rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            fill: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            max-width: 400px;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state .note {
+            color: #06b6d4;
+            font-size: 0.875rem;
+            font-style: italic;
+        }
+
+        /* Analysis Container */
+        .analysis-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .analysis-container.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Analysis Overview */
+        .analysis-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .overview-value {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-value.high { color: #10b981; }
+        .overview-value.medium { color: #f59e0b; }
+        .overview-value.low { color: #ef4444; }
+
+        .overview-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        /* Analysis Sections */
+        .analysis-section {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-icon {
+            width: 20px;
+            height: 20px;
+            fill: #06b6d4;
+            margin-right: 0.75rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .section-content {
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        /* Strength/Weakness Items */
+        .analysis-items {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .analysis-item {
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border-left: 4px solid;
+        }
+
+        .analysis-item.strength {
+            border-left-color: #10b981;
+        }
+
+        .analysis-item.weakness {
+            border-left-color: #ef4444;
+        }
+
+        .analysis-item.opportunity {
+            border-left-color: #06b6d4;
+        }
+
+        .analysis-item.threat {
+            border-left-color: #f59e0b;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: white;
+            flex: 1;
+        }
+
+        .item-impact {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            margin-left: 1rem;
+        }
+
+        .impact-high {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .impact-medium {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .impact-low {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .item-description {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Risk Matrix */
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .risk-cell {
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        .risk-cell.high-risk {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        .risk-cell.medium-risk {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-color: #f59e0b;
+        }
+
+        .risk-cell.low-risk {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+        }
+
+        .risk-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-percentage {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Recommendations */
+        .recommendations {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .recommendation-item {
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border-left: 4px solid #06b6d4;
+        }
+
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .recommendation-title {
+            font-weight: 600;
+            color: white;
+        }
+
+        .priority-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }
+
+        .priority-critical {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .priority-high {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .priority-medium {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        .recommendation-description {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .recommendation-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .action-tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            background-color: #374151;
+            color: #d1d5db;
+        }
+
+        /* Legal Disclaimer */
+        .legal-disclaimer {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            border-left: 4px solid #f59e0b;
+            margin-top: 2rem;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #374151;
+            border-top: 2px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .analysis-overview {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .risk-matrix {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7V9C15 10.1 15.9 11 17 11V20C17 21.1 16.1 22 15 22H9C7.9 22 7 21.1 7 20V11C8.1 11 9 10.1 9 9V7H3V9C3 10.1 3.9 11 5 11V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V11C20.1 11 21 10.1 21 9Z"/>
+                </svg>
+                <span class="logo-text">PALA</span>
+            </div>
+
+            <a href="dashboard.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="ai-chat-advocate.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                AI Chat Advocate
+            </a>
+
+            <a href="case-details-with-summary.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Case Details
+            </a>
+
+            <a href="case-timeline.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                Case Timeline
+            </a>
+
+            <a href="strategy-risks.html" class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                </svg>
+                Strategy & Risks
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Document Assistant
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                Communication Coach
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                Private Journal
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47z"/>
+                </svg>
+                Resource Finder
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <div class="header-content">
+                    <h1>
+                        <svg class="header-icon" viewBox="0 0 24 24">
+                            <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                        </svg>
+                        Strategy & Risk Analysis
+                    </h1>
+                    <p>AI-powered analysis of your case's strengths, weaknesses, and path forward.</p>
+                </div>
+                <button class="analyze-btn" id="analyzeBtn" onclick="analyzeCase()">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                    </svg>
+                    Analyze My Case
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState">
+                <svg class="empty-icon" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <h2>Ready for analysis</h2>
+                <p>Click the button above to generate a strategic breakdown based on your case details.</p>
+                <p class="note">Ensure your Case Summary is filled out for best results.</p>
+            </div>
+
+            <!-- Analysis Container -->
+            <div class="analysis-container" id="analysisContainer">
+                <!-- Analysis Overview -->
+                <div class="analysis-overview">
+                    <div class="overview-card">
+                        <div class="overview-value medium" id="caseStrength">72%</div>
+                        <div class="overview-label">Case Strength</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value low" id="riskLevel">High</div>
+                        <div class="overview-label">Risk Level</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value high" id="successProbability">68%</div>
+                        <div class="overview-label">Success Probability</div>
+                    </div>
+                    <div class="overview-card">
+                        <div class="overview-value medium" id="timelineRisk">Medium</div>
+                        <div class="overview-label">Timeline Risk</div>
+                    </div>
+                </div>
+
+                <!-- SWOT Analysis -->
+                <div class="analysis-section">
+                    <div class="section-header">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        <h2 class="section-title">SWOT Analysis</h2>
+                    </div>
+                    <div class="analysis-items" id="swotAnalysis">
+                        <!-- SWOT items will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Risk Assessment -->
+                <div class="analysis-section">
+                    <div class="section-header">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <h2 class="section-title">Risk Assessment Matrix</h2>
+                    </div>
+                    <div class="risk-matrix" id="riskMatrix">
+                        <!-- Risk matrix will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Strategic Recommendations -->
+                <div class="analysis-section">
+                    <div class="section-header">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                        </svg>
+                        <h2 class="section-title">Strategic Recommendations</h2>
+                    </div>
+                    <div class="recommendations" id="recommendations">
+                        <!-- Recommendations will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Legal Disclaimer -->
+                <div class="legal-disclaimer">
+                    <strong>⚠️ Legal Disclaimer:</strong> This analysis is generated by AI based on the information you provided and should not be considered as legal advice. The assessments, risk evaluations, and recommendations are estimates based on general legal patterns and may not reflect the specific complexities of your case. Always consult with a qualified attorney before making any legal decisions. Case outcomes can vary significantly based on factors not captured in this analysis.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Analysis templates based on case types
+        const analysisTemplates = {
+            property: {
+                strengths: [
+                    {
+                        title: "Clear Documentation",
+                        impact: "high",
+                        description: "Strong property documents and title deeds provide solid legal foundation for your claim."
+                    },
+                    {
+                        title: "Possession History",
+                        impact: "medium",
+                        description: "Long-term possession and maintenance records support your ownership claim."
+                    }
+                ],
+                weaknesses: [
+                    {
+                        title: "Disputed Boundaries",
+                        impact: "high",
+                        description: "Unclear property boundaries may complicate the case and require survey evidence."
+                    },
+                    {
+                        title: "Missing Witnesses",
+                        impact: "medium",
+                        description: "Limited witness testimony may weaken evidence presentation in court."
+                    }
+                ],
+                opportunities: [
+                    {
+                        title: "Settlement Potential",
+                        impact: "high",
+                        description: "Strong legal position may encourage opposing party to settle out of court."
+                    },
+                    {
+                        title: "Precedent Cases",
+                        impact: "medium",
+                        description: "Similar successful cases in your jurisdiction strengthen legal arguments."
+                    }
+                ],
+                threats: [
+                    {
+                        title: "Court Delays",
+                        impact: "high",
+                        description: "Property disputes often face significant delays in Indian courts, increasing costs."
+                    },
+                    {
+                        title: "Counter Claims",
+                        impact: "medium",
+                        description: "Opposing party may file counter-claims that could complicate proceedings."
+                    }
+                ],
+                risks: [
+                    { title: "Financial Risk", percentage: "75%", level: "high" },
+                    { title: "Time Risk", percentage: "85%", level: "high" },
+                    { title: "Legal Risk", percentage: "45%", level: "medium" }
+                ],
+                recommendations: [
+                    {
+                        title: "Strengthen Documentation",
+                        priority: "critical",
+                        description: "Obtain certified copies of all property documents and conduct a comprehensive title search to identify any gaps in documentation.",
+                        actions: ["Title Search", "Document Verification", "Survey Report"]
+                    },
+                    {
+                        title: "Explore Settlement Options",
+                        priority: "high",
+                        description: "Given the strong legal position, initiate settlement discussions to avoid lengthy court proceedings and reduce costs.",
+                        actions: ["Mediation", "Negotiation", "Settlement Terms"]
+                    },
+                    {
+                        title: "Prepare for Long Timeline",
+                        priority: "medium",
+                        description: "Property disputes typically take 2-5 years. Plan finances and maintain property during proceedings.",
+                        actions: ["Financial Planning", "Property Maintenance", "Legal Budget"]
+                    }
+                ]
+            },
+            employment: {
+                strengths: [
+                    {
+                        title: "Employment Records",
+                        impact: "high",
+                        description: "Complete employment documentation and salary records support your claims."
+                    },
+                    {
+                        title: "Witness Support",
+                        impact: "medium",
+                        description: "Colleague testimonies can corroborate workplace incidents and harassment."
+                    }
+                ],
+                weaknesses: [
+                    {
+                        title: "Limited Evidence",
+                        impact: "high",
+                        description: "Workplace incidents often lack concrete evidence, relying on testimonial proof."
+                    },
+                    {
+                        title: "Company Resources",
+                        impact: "medium",
+                        description: "Large employers typically have stronger legal representation and resources."
+                    }
+                ],
+                opportunities: [
+                    {
+                        title: "Labour Law Protection",
+                        impact: "high",
+                        description: "Strong labour laws in India provide multiple avenues for employee protection."
+                    },
+                    {
+                        title: "Quick Resolution",
+                        impact: "medium",
+                        description: "Employment disputes often resolve faster than other civil matters."
+                    }
+                ],
+                threats: [
+                    {
+                        title: "Career Impact",
+                        impact: "high",
+                        description: "Legal action against employer may affect future employment opportunities."
+                    },
+                    {
+                        title: "Retaliation Risk",
+                        impact: "medium",
+                        description: "Employer may attempt retaliation during proceedings."
+                    }
+                ],
+                risks: [
+                    { title: "Career Risk", percentage: "65%", level: "high" },
+                    { title: "Financial Risk", percentage: "45%", level: "medium" },
+                    { title: "Success Risk", percentage: "35%", level: "low" }
+                ],
+                recommendations: [
+                    {
+                        title: "Document Everything",
+                        priority: "critical",
+                        description: "Maintain detailed records of all workplace incidents, communications, and evidence of violations.",
+                        actions: ["Incident Documentation", "Email Records", "Witness Statements"]
+                    },
+                    {
+                        title: "Explore Internal Resolution",
+                        priority: "high",
+                        description: "Attempt resolution through company's internal grievance mechanism before external legal action.",
+                        actions: ["HR Complaint", "Internal Mediation", "Grievance Process"]
+                    }
+                ]
+            },
+            family: {
+                strengths: [
+                    {
+                        title: "Marriage Documentation",
+                        impact: "high",
+                        description: "Valid marriage certificate and related documents establish legal relationship."
+                    },
+                    {
+                        title: "Financial Records",
+                        impact: "medium",
+                        description: "Complete financial documentation supports maintenance and property claims."
+                    }
+                ],
+                weaknesses: [
+                    {
+                        title: "Emotional Complexity",
+                        impact: "high",
+                        description: "Family disputes involve emotional factors that can complicate legal proceedings."
+                    },
+                    {
+                        title: "Child Welfare Concerns",
+                        impact: "high",
+                        description: "Court prioritizes child welfare, which may affect custody and maintenance decisions."
+                    }
+                ],
+                opportunities: [
+                    {
+                        title: "Mediation Success",
+                        impact: "high",
+                        description: "Family courts encourage mediation, which often leads to mutually acceptable solutions."
+                    },
+                    {
+                        title: "Legal Protections",
+                        impact: "medium",
+                        description: "Strong legal protections for women and children in Indian family law."
+                    }
+                ],
+                threats: [
+                    {
+                        title: "Prolonged Proceedings",
+                        impact: "high",
+                        description: "Family disputes can be emotionally draining and may take years to resolve."
+                    },
+                    {
+                        title: "Social Impact",
+                        impact: "medium",
+                        description: "Family legal proceedings may have social and community implications."
+                    }
+                ],
+                risks: [
+                    { title: "Emotional Risk", percentage: "85%", level: "high" },
+                    { title: "Time Risk", percentage: "75%", level: "high" },
+                    { title: "Financial Risk", percentage: "55%", level: "medium" }
+                ],
+                recommendations: [
+                    {
+                        title: "Prioritize Mediation",
+                        priority: "critical",
+                        description: "Engage in family counseling and mediation to explore amicable resolution before contested proceedings.",
+                        actions: ["Family Counseling", "Mediation", "Mutual Consent"]
+                    },
+                    {
+                        title: "Protect Children's Interests",
+                        priority: "critical",
+                        description: "Ensure all decisions prioritize children's welfare and maintain their stability during proceedings.",
+                        actions: ["Child Counseling", "Custody Planning", "Educational Continuity"]
+                    }
+                ]
+            }
+        };
+
+        // Generate comprehensive case analysis
+        function analyzeCase() {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const emptyState = document.getElementById('emptyState');
+            const analysisContainer = document.getElementById('analysisContainer');
+
+            // Show loading state
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<div class="loading-spinner"></div>Analyzing Case...';
+
+            // Get case details from localStorage
+            const caseDetails = JSON.parse(localStorage.getItem('caseDetails') || '{}');
+            const caseType = caseDetails.caseType || 'property';
+
+            // Simulate AI analysis
+            setTimeout(() => {
+                // Get appropriate analysis template
+                const template = analysisTemplates[caseType] || analysisTemplates.property;
+                
+                // Generate SWOT analysis
+                generateSWOTAnalysis(template);
+                
+                // Generate risk matrix
+                generateRiskMatrix(template.risks);
+                
+                // Generate recommendations
+                generateRecommendations(template.recommendations);
+                
+                // Update overview metrics based on analysis
+                updateOverviewMetrics(template);
+
+                // Show analysis
+                emptyState.style.display = 'none';
+                analysisContainer.classList.add('show');
+
+                // Reset button
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24"><path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/></svg>Re-analyze Case';
+            }, 4000);
+        }
+
+        // Generate SWOT analysis items
+        function generateSWOTAnalysis(template) {
+            const swotContainer = document.getElementById('swotAnalysis');
+            swotContainer.innerHTML = '';
+
+            const categories = [
+                { items: template.strengths, type: 'strength', title: 'Strengths' },
+                { items: template.weaknesses, type: 'weakness', title: 'Weaknesses' },
+                { items: template.opportunities, type: 'opportunity', title: 'Opportunities' },
+                { items: template.threats, type: 'threat', title: 'Threats' }
+            ];
+
+            categories.forEach(category => {
+                category.items.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = `analysis-item ${category.type}`;
+                    itemElement.innerHTML = `
+                        <div class="item-header">
+                            <div class="item-title">${item.title}</div>
+                            <span class="item-impact impact-${item.impact}">${item.impact.toUpperCase()}</span>
+                        </div>
+                        <div class="item-description">${item.description}</div>
+                    `;
+                    swotContainer.appendChild(itemElement);
+                });
+            });
+        }
+
+        // Generate risk matrix
+        function generateRiskMatrix(risks) {
+            const riskContainer = document.getElementById('riskMatrix');
+            riskContainer.innerHTML = '';
+
+            risks.forEach(risk => {
+                const riskElement = document.createElement('div');
+                riskElement.className = `risk-cell ${risk.level}-risk`;
+                riskElement.innerHTML = `
+                    <div class="risk-title">${risk.title}</div>
+                    <div class="risk-percentage">${risk.percentage}</div>
+                `;
+                riskContainer.appendChild(riskElement);
+            });
+        }
+
+        // Generate recommendations
+        function generateRecommendations(recommendations) {
+            const recommendationsContainer = document.getElementById('recommendations');
+            recommendationsContainer.innerHTML = '';
+
+            recommendations.forEach(rec => {
+                const recElement = document.createElement('div');
+                recElement.className = 'recommendation-item';
+                
+                const actionTags = rec.actions.map(action => 
+                    `<span class="action-tag">${action}</span>`
+                ).join('');
+
+                recElement.innerHTML = `
+                    <div class="recommendation-header">
+                        <div class="recommendation-title">${rec.title}</div>
+                        <span class="priority-badge priority-${rec.priority}">${rec.priority.toUpperCase()}</span>
+                    </div>
+                    <div class="recommendation-description">${rec.description}</div>
+                    <div class="recommendation-actions">${actionTags}</div>
+                `;
+                recommendationsContainer.appendChild(recElement);
+            });
+        }
+
+        // Update overview metrics
+        function updateOverviewMetrics(template) {
+            // Calculate metrics based on SWOT analysis
+            const strengthCount = template.strengths.length;
+            const weaknessCount = template.weaknesses.length;
+            const opportunityCount = template.opportunities.length;
+            const threatCount = template.threats.length;
+
+            // Case strength calculation
+            const caseStrength = Math.round(((strengthCount + opportunityCount) / (strengthCount + weaknessCount + opportunityCount + threatCount)) * 100);
+            document.getElementById('caseStrength').textContent = caseStrength + '%';
+            document.getElementById('caseStrength').className = `overview-value ${caseStrength > 70 ? 'high' : caseStrength > 50 ? 'medium' : 'low'}`;
+
+            // Success probability
+            const successProb = Math.max(45, Math.min(85, caseStrength + Math.random() * 20 - 10));
+            document.getElementById('successProbability').textContent = Math.round(successProb) + '%';
+            document.getElementById('successProbability').className = `overview-value ${successProb > 70 ? 'high' : successProb > 50 ? 'medium' : 'low'}`;
+
+            // Risk level
+            const riskLevel = threatCount > strengthCount ? 'High' : threatCount === strengthCount ? 'Medium' : 'Low';
+            document.getElementById('riskLevel').textContent = riskLevel;
+            document.getElementById('riskLevel').className = `overview-value ${riskLevel === 'Low' ? 'high' : riskLevel === 'Medium' ? 'medium' : 'low'}`;
+
+            // Timeline risk
+            const timelineRisk = template.threats.some(t => t.title.includes('Delay') || t.title.includes('Time')) ? 'High' : 'Medium';
+            document.getElementById('timelineRisk').textContent = timelineRisk;
+            document.getElementById('timelineRisk').className = `overview-value ${timelineRisk === 'Low' ? 'high' : timelineRisk === 'Medium' ? 'medium' : 'low'}`;
+        }
+
+        // Auto-analyze if case details exist
+        document.addEventListener('DOMContentLoaded', function() {
+            const caseDetails = JSON.parse(localStorage.getItem('caseDetails') || '{}');
+            if (caseDetails.caseSummary && caseDetails.caseSummary.length > 100) {
+                setTimeout(() => {
+                    analyzeCase();
+                }, 1500);
+            }
+        });
+    </script>
+</body>
+</html>

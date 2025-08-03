@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Details - Personal AI Legal Advocate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #1e293b;
+            border-right: 1px solid #334155;
+            padding: 1rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background-color: #334155;
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: #1e40af;
+            color: white;
+            border-left-color: #06b6d4;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            fill: currentColor;
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            background-color: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+            max-width: calc(100vw - 250px);
+        }
+
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.75rem;
+        }
+
+        .header p {
+            color: #94a3b8;
+        }
+
+        /* Form Styles */
+        .case-form {
+            background-color: #1e293b;
+            border-radius: 0.75rem;
+            border: 1px solid #334155;
+            overflow: hidden;
+        }
+
+        .form-section {
+            padding: 2rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            width: 20px;
+            height: 20px;
+            fill: #06b6d4;
+            margin-right: 0.5rem;
+        }
+
+        .section-description {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .form-textarea {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: white;
+            font-family: inherit;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .form-textarea::placeholder {
+            color: #64748b;
+        }
+
+        .form-input {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #64748b;
+        }
+
+        .textarea-small {
+            min-height: 120px;
+        }
+
+        .textarea-medium {
+            min-height: 150px;
+        }
+
+        .textarea-large {
+            min-height: 200px;
+        }
+
+        /* AI Summary Generator Styles */
+        .ai-generator {
+            background: linear-gradient(135deg, #1e40af 0%, #06b6d4 100%);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-generator-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .ai-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+            margin-right: 0.75rem;
+        }
+
+        .ai-generator-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .quick-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .generate-button {
+            background-color: white;
+            color: #1e40af;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .generate-button:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .generate-button:disabled {
+            background-color: #64748b;
+            color: white;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .generate-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            margin-right: 0.5rem;
+        }
+
+        .generated-summary {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .generated-summary.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .summary-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .action-button {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-actions {
+            padding: 2rem;
+            background-color: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .save-button {
+            background-color: #06b6d4;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .save-button:hover {
+            background-color: #0891b2;
+        }
+
+        .save-button:disabled {
+            background-color: #374151;
+            cursor: not-allowed;
+        }
+
+        .save-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            margin-right: 0.5rem;
+        }
+
+        .form-status {
+            display: flex;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .status-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            margin-right: 0.5rem;
+        }
+
+        .progress-indicator {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .progress-percentage {
+            font-size: 0.875rem;
+            color: #06b6d4;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #06b6d4;
+            transition: width 0.3s ease;
+        }
+
+        .character-count {
+            text-align: right;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        .required-field {
+            color: #ef4444;
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #1e40af;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+
+            .form-section {
+                padding: 1.5rem;
+            }
+
+            .form-actions {
+                padding: 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .quick-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7V9C15 10.1 15.9 11 17 11V20C17 21.1 16.1 22 15 22H9C7.9 22 7 21.1 7 20V11C8.1 11 9 10.1 9 9V7H3V9C3 10.1 3.9 11 5 11V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V11C20.1 11 21 10.1 21 9Z"/>
+                </svg>
+                <span class="logo-text">PALA</span>
+            </div>
+
+            <a href="dashboard.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="ai-chat-advocate.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                AI Chat Advocate
+            </a>
+
+            <a href="case-details-with-summary.html" class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Case Details
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                Case Timeline
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                </svg>
+                Strategy & Risks
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Document Assistant
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                Communication Coach
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                Private Journal
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47z"/>
+                </svg>
+                Resource Finder
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1>
+                    <svg class="header-icon" viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                    Your Case Details
+                </h1>
+                <p>Provide details to personalize your AI advocate's guidance.</p>
+            </div>
+
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-header">
+                    <span class="progress-title">Case Details Completion</span>
+                    <span class="progress-percentage" id="progressPercentage">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Case Details Form -->
+            <form class="case-form" id="caseForm">
+                <!-- AI Summary Generator Section -->
+                <div class="form-section">
+                    <div class="ai-generator">
+                        <div class="ai-generator-header">
+                            <svg class="ai-icon" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <h2 class="ai-generator-title">AI Case Summary Generator</h2>
+                        </div>
+                        <p style="color: rgba(255,255,255,0.8); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                            Answer a few quick questions to generate a structured summary that you can use as a starting point for your detailed case description.
+                        </p>
+
+                        <div class="quick-inputs">
+                            <div class="input-group">
+                                <label class="input-label">What type of legal issue?</label>
+                                <select class="form-input" id="caseType">
+                                    <option value="">Select case type...</option>
+                                    <option value="property">Property Dispute</option>
+                                    <option value="employment">Employment Issue</option>
+                                    <option value="family">Family/Marriage</option>
+                                    <option value="consumer">Consumer Complaint</option>
+                                    <option value="criminal">Criminal Matter</option>
+                                    <option value="contract">Contract Dispute</option>
+                                    <option value="tenant">Tenant Rights</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">When did this issue start?</label>
+                                <input type="date" class="form-input" id="issueDate">
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Who is the other party?</label>
+                                <input type="text" class="form-input" id="otherParty" placeholder="e.g., Landlord, Employer, Company name...">
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">What happened? (Brief)</label>
+                                <input type="text" class="form-input" id="briefDescription" placeholder="One sentence summary...">
+                            </div>
+                        </div>
+
+                        <button type="button" class="generate-button" id="generateSummary">
+                            <svg class="generate-icon" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            Generate AI Summary
+                        </button>
+
+                        <div class="generated-summary" id="generatedSummary">
+                            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; color: white;">Generated Summary:</h3>
+                            <div id="summaryContent" style="color: rgba(255,255,255,0.9); line-height: 1.6;"></div>
+                            <div class="summary-actions">
+                                <button type="button" class="action-button" onclick="useSummary()">Use This Summary</button>
+                                <button type="button" class="action-button" onclick="regenerateSummary()">Regenerate</button>
+                                <button type="button" class="action-button" onclick="editSummary()">Edit & Use</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case Summary Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                        Case Summary <span class="required-field">*</span>
+                    </h2>
+                    <p class="section-description">
+                        Describe the situation in chronological order. What happened, when, and where? You can use the AI-generated summary above as a starting point.
+                    </p>
+                    <textarea 
+                        class="form-textarea textarea-large" 
+                        id="caseSummary"
+                        placeholder="Start from the beginning and describe your legal situation in detail. Include dates, locations, and key events that led to your current situation..."
+                        required
+                    ></textarea>
+                    <div class="character-count" id="summaryCount">0 / 2000 characters</div>
+                </div>
+
+                <!-- Key People & Witnesses Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A2.996 2.996 0 0 0 17.06 6H16c-.8 0-1.54.37-2.01.99L12 9l-1.99-2.01A2.99 2.99 0 0 0 8 6H6.94c-1.4 0-2.59.93-2.9 2.37L1.5 16H4v6h2v-6h2.5l1.5-4.5L12 14l1.5-2.5L15 16h2.5v6h2z"/>
+                        </svg>
+                        Key People & Witnesses
+                    </h2>
+                    <p class="section-description">
+                        List names and roles (e.g., John Smith - Witness, Jane Doe - Opposing Counsel, Dr. Emily White - Expert).
+                    </p>
+                    <textarea 
+                        class="form-textarea textarea-medium" 
+                        id="keyPeople"
+                        placeholder="List all relevant people involved in your case:&#10;&#10;• [Name] - [Role/Relationship]&#10;• [Name] - [Role/Relationship]&#10;&#10;Include contact information if available and relevant."
+                    ></textarea>
+                    <div class="character-count" id="peopleCount">0 / 1000 characters</div>
+                </div>
+
+                <!-- Evidence Log Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        </svg>
+                        Evidence Log
+                    </h2>
+                    <p class="section-description">
+                        List and describe any evidence you have (e.g., "Email from May 5th confirming agreement", "Photos of the damage", "Contract dated Jan 1st").
+                    </p>
+                    <textarea 
+                        class="form-textarea textarea-medium" 
+                        id="evidenceLog"
+                        placeholder="Document all evidence you have:&#10;&#10;• [Type of Evidence] - [Brief Description] - [Date]&#10;• [Type of Evidence] - [Brief Description] - [Date]&#10;&#10;Include physical documents, digital records, photos, videos, audio recordings, etc."
+                    ></textarea>
+                    <div class="character-count" id="evidenceCount">0 / 1000 characters</div>
+                </div>
+
+                <!-- Desired Outcome Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        Desired Outcome <span class="required-field">*</span>
+                    </h2>
+                    <p class="section-description">
+                        What is the ideal resolution for your situation? Be as specific as possible.
+                    </p>
+                    <textarea 
+                        class="form-textarea textarea-medium" 
+                        id="desiredOutcome"
+                        placeholder="Describe what you want to achieve:&#10;&#10;• Monetary compensation (specify amount if known)&#10;• Specific actions from the other party&#10;• Legal protection or restraining orders&#10;• Property or asset recovery&#10;• Other specific outcomes..."
+                        required
+                    ></textarea>
+                    <div class="character-count" id="outcomeCount">0 / 800 characters</div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <div class="form-status">
+                        <svg class="status-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span id="saveStatus">All changes saved</span>
+                    </div>
+                    <button type="submit" class="save-button" id="saveButton">
+                        <svg class="save-icon" viewBox="0 0 24 24">
+                            <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+                        </svg>
+                        Save & Update My Case
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // AI Summary Templates
+        const summaryTemplates = {
+            property: "This is a property dispute case that began on {date} involving {otherParty}. The issue centers around {briefDescription}. The dispute involves questions of property rights, ownership, or usage that require legal resolution. Key legal considerations may include property laws, documentation requirements, and potential remedies under Indian property legislation.",
+            
+            employment: "This employment-related legal matter started on {date} with {otherParty}. The situation involves {briefDescription}. This case may involve workplace rights, employment contracts, termination procedures, or labor law violations. Relevant legislation could include the Industrial Disputes Act, Payment of Wages Act, or workplace harassment laws.",
+            
+            family: "This family law case began on {date} concerning {otherParty}. The matter involves {briefDescription}. This case may relate to marriage, divorce, child custody, maintenance, or domestic relations. Applicable laws could include the Hindu Marriage Act, Muslim Personal Law, or other personal laws depending on the parties involved.",
+            
+            consumer: "This consumer protection case started on {date} with {otherParty}. The issue involves {briefDescription}. This matter concerns consumer rights, defective products or services, unfair trade practices, or seeking redressal for consumer grievances. The Consumer Protection Act, 2019 may be applicable.",
+            
+            criminal: "This criminal matter began on {date} involving {otherParty}. The situation concerns {briefDescription}. This case involves potential criminal offenses under the Indian Penal Code, procedural matters under the Code of Criminal Procedure, or issues related to police investigation and legal proceedings.",
+            
+            contract: "This contract dispute started on {date} with {otherParty}. The disagreement involves {briefDescription}. This case concerns breach of contract, contractual obligations, performance issues, or disputes over terms and conditions. The Indian Contract Act, 1872 and related commercial laws may apply.",
+            
+            tenant: "This tenant rights case began on {date} involving {otherParty} as the landlord. The issue concerns {briefDescription}. This matter involves rental agreements, tenant rights, eviction procedures, security deposits, or landlord-tenant disputes. State-specific rent control acts and the Transfer of Property Act may be relevant.",
+            
+            other: "This legal matter started on {date} involving {otherParty}. The situation concerns {briefDescription}. This case requires careful analysis to determine the applicable laws and legal remedies available under Indian legislation."
+        };
+
+        // Character counting and progress tracking
+        const textareas = {
+            caseSummary: { element: document.getElementById('caseSummary'), counter: document.getElementById('summaryCount'), max: 2000, weight: 40 },
+            keyPeople: { element: document.getElementById('keyPeople'), counter: document.getElementById('peopleCount'), max: 1000, weight: 20 },
+            evidenceLog: { element: document.getElementById('evidenceLog'), counter: document.getElementById('evidenceCount'), max: 1000, weight: 20 },
+            desiredOutcome: { element: document.getElementById('desiredOutcome'), counter: document.getElementById('outcomeCount'), max: 800, weight: 20 }
+        };
+
+        const progressFill = document.getElementById('progressFill');
+        const progressPercentage = document.getElementById('progressPercentage');
+        const saveStatus = document.getElementById('saveStatus');
+
+        let autoSaveTimeout;
+
+        // AI Summary Generation
+        function generateAISummary() {
+            const caseType = document.getElementById('caseType').value;
+            const issueDate = document.getElementById('issueDate').value;
+            const otherParty = document.getElementById('otherParty').value;
+            const briefDescription = document.getElementById('briefDescription').value;
+
+            if (!caseType || !briefDescription) {
+                alert('Please fill in at least the case type and brief description to generate a summary.');
+                return;
+            }
+
+            const generateButton = document.getElementById('generateSummary');
+            generateButton.disabled = true;
+            generateButton.innerHTML = '<div class="loading-spinner"></div>Generating...';
+
+            // Simulate AI processing delay
+            setTimeout(() => {
+                const template = summaryTemplates[caseType] || summaryTemplates.other;
+                const formattedDate = issueDate ? new Date(issueDate).toLocaleDateString('en-IN') : '[Date not specified]';
+                
+                let summary = template
+                    .replace('{date}', formattedDate)
+                    .replace('{otherParty}', otherParty || '[Other party not specified]')
+                    .replace('{briefDescription}', briefDescription);
+
+                // Add additional context based on inputs
+                if (issueDate) {
+                    const daysSince = Math.floor((new Date() - new Date(issueDate)) / (1000 * 60 * 60 * 24));
+                    summary += ` This matter has been ongoing for approximately ${daysSince} days.`;
+                }
+
+                summary += "\n\nNext steps should include gathering all relevant documentation, identifying key witnesses, and consulting with a qualified attorney to understand the legal options and potential outcomes for this case.";
+
+                document.getElementById('summaryContent').innerHTML = summary.replace(/\n/g, '<br>');
+                document.getElementById('generatedSummary').classList.add('show');
+
+                generateButton.disabled = false;
+                generateButton.innerHTML = '<svg class="generate-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Generate AI Summary';
+            }, 2000);
+        }
+
+        // Summary action functions
+        function useSummary() {
+            const summaryContent = document.getElementById('summaryContent').textContent;
+            document.getElementById('caseSummary').value = summaryContent;
+            updateCharacterCount('caseSummary');
+            alert('Summary has been added to your case summary field. You can now edit and expand it as needed.');
+        }
+
+        function regenerateSummary() {
+            generateAISummary();
+        }
+
+        function editSummary() {
+            const summaryContent = document.getElementById('summaryContent').textContent;
+            const editedSummary = prompt('Edit your summary:', summaryContent);
+            if (editedSummary !== null) {
+                document.getElementById('caseSummary').value = editedSummary;
+                updateCharacterCount('caseSummary');
+                alert('Edited summary has been added to your case summary field.');
+            }
+        }
+
+        // Update character count and progress
+        function updateCharacterCount(textareaId) {
+            const textarea = textareas[textareaId];
+            const length = textarea.element.value.length;
+            textarea.counter.textContent = `${length} / ${textarea.max} characters`;
+            
+            // Change color if approaching limit
+            if (length > textarea.max * 0.9) {
+                textarea.counter.style.color = '#ef4444';
+            } else if (length > textarea.max * 0.7) {
+                textarea.counter.style.color = '#f59e0b';
+            } else {
+                textarea.counter.style.color = '#64748b';
+            }
+
+            updateProgress();
+            triggerAutoSave();
+        }
+
+        // Calculate completion progress
+        function updateProgress() {
+            let totalProgress = 0;
+            
+            for (const [id, textarea] of Object.entries(textareas)) {
+                const completion = Math.min(textarea.element.value.length / (textarea.max * 0.3), 1);
+                totalProgress += completion * textarea.weight;
+            }
+
+            const percentage = Math.round(totalProgress);
+            progressFill.style.width = percentage + '%';
+            progressPercentage.textContent = percentage + '%';
+        }
+
+        // Auto-save functionality
+        function triggerAutoSave() {
+            clearTimeout(autoSaveTimeout);
+            saveStatus.textContent = 'Saving...';
+            
+            autoSaveTimeout = setTimeout(() => {
+                saveStatus.textContent = 'All changes saved';
+                saveToLocalStorage();
+            }, 1500);
+        }
+
+        // Save to localStorage
+        function saveToLocalStorage() {
+            const caseData = {};
+            for (const [id, textarea] of Object.entries(textareas)) {
+                caseData[id] = textarea.element.value;
+            }
+            // Also save AI generator inputs
+            caseData.caseType = document.getElementById('caseType').value;
+            caseData.issueDate = document.getElementById('issueDate').value;
+            caseData.otherParty = document.getElementById('otherParty').value;
+            caseData.briefDescription = document.getElementById('briefDescription').value;
+            
+            localStorage.setItem('caseDetails', JSON.stringify(caseData));
+        }
+
+        // Load from localStorage
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('caseDetails');
+            if (saved) {
+                const caseData = JSON.parse(saved);
+                for (const [id, value] of Object.entries(caseData)) {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.value = value;
+                        if (textareas[id]) {
+                            updateCharacterCount(id);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Event listeners
+        document.getElementById('generateSummary').addEventListener('click', generateAISummary);
+
+        // Form submission
+        document.getElementById('caseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const saveButton = document.getElementById('saveButton');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<svg class="save-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Saving...';
+            
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<svg class="save-icon" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>Case Updated Successfully!';
+                
+                setTimeout(() => {
+                    saveButton.innerHTML = '<svg class="save-icon" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>Save & Update My Case';
+                }, 2000);
+            }, 1000);
+        });
+
+        // Add event listeners for all textareas
+        for (const [id, textarea] of Object.entries(textareas)) {
+            textarea.element.addEventListener('input', () => updateCharacterCount(id));
+            
+            // Auto-resize textarea
+            textarea.element.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 300) + 'px';
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

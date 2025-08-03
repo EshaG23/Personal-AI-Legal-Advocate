@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Journal - Personal AI Legal Advocate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #1e293b;
+            border-right: 1px solid #334155;
+            padding: 1rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background-color: #334155;
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: #1e40af;
+            color: white;
+            border-left-color: #06b6d4;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            fill: currentColor;
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            background-color: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .header-content h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.75rem;
+        }
+
+        .header-content p {
+            color: #94a3b8;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .header-btn {
+            background-color: #374151;
+            color: #d1d5db;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-btn:hover {
+            background-color: #4b5563;
+        }
+
+        .header-btn.primary {
+            background-color: #06b6d4;
+            color: white;
+        }
+
+        .header-btn.primary:hover {
+            background-color: #0891b2;
+        }
+
+        .btn-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            margin-right: 0.5rem;
+        }
+
+        /* Journal Controls */
+        .journal-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            color: white;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            fill: #94a3b8;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background-color: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background-color: #334155;
+            color: white;
+        }
+
+        .filter-btn.active {
+            background-color: #06b6d4;
+            color: white;
+            border-color: #06b6d4;
+        }
+
+        /* New Entry Form */
+        .new-entry-form {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .form-toggle {
+            background-color: #374151;
+            color: #d1d5db;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .form-toggle:hover {
+            background-color: #4b5563;
+        }
+
+        .entry-metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metadata-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metadata-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #d1d5db;
+            margin-bottom: 0.5rem;
+        }
+
+        .metadata-input {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .metadata-input:focus {
+            outline: none;
+            border-color: #06b6d4;
+        }
+
+        .metadata-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .entry-textarea {
+            width: 100%;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: white;
+            font-family: inherit;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 120px;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .entry-textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        .entry-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .entry-options {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .mood-selector {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .mood-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .mood-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .mood-option:hover {
+            transform: scale(1.1);
+        }
+
+        .mood-option.selected {
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+
+        .privacy-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .privacy-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: #06b6d4;
+        }
+
+        .privacy-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .add-entry-btn {
+            background-color: #06b6d4;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .add-entry-btn:hover {
+            background-color: #0891b2;
+        }
+
+        .add-entry-btn:disabled {
+            background-color: #374151;
+            cursor: not-allowed;
+        }
+
+        /* Journal Entries */
+        .journal-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .journal-entry {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .journal-entry:hover {
+            border-color: #475569;
+            transform: translateY(-1px);
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .entry-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .entry-date {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .entry-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .entry-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .entry-category {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-weight: 500;
+        }
+
+        .category-general {
+            background-color: rgba(107, 114, 128, 0.2);
+            color: #d1d5db;
+        }
+
+        .category-meeting {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        .category-research {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .category-strategy {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .category-personal {
+            background-color: rgba(236, 72, 153, 0.2);
+            color: #f9a8d4;
+        }
+
+        .entry-mood {
+            font-size: 1rem;
+        }
+
+        .entry-actions-menu {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .entry-action-btn {
+            background-color: transparent;
+            color: #94a3b8;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .entry-action-btn:hover {
+            background-color: #374151;
+            color: white;
+        }
+
+        .entry-content {
+            color: #d1d5db;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .entry-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .entry-tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            background-color: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .private-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 16px;
+            height: 16px;
+            fill: #f59e0b;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            fill: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            max-width: 400px;
+        }
+
+        /* Statistics Panel */
+        .stats-panel {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stats-icon {
+            width: 20px;
+            height: 20px;
+            fill: #06b6d4;
+            margin-right: 0.75rem;
+        }
+
+        .stats-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #06b6d4;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        /* Export Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .modal-close {
+            background-color: transparent;
+            color: #94a3b8;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-close:hover {
+            color: white;
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .export-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .export-option:hover {
+            background-color: #374151;
+            border-color: #06b6d4;
+        }
+
+        .export-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 1rem;
+        }
+
+        .export-info {
+            flex: 1;
+        }
+
+        .export-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .export-description {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #374151;
+            border-top: 2px solid #06b6d4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .journal-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-container {
+                max-width: none;
+            }
+
+            .entry-metadata {
+                grid-template-columns: 1fr;
+            }
+
+            .entry-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .entry-meta {
+                flex-wrap: wrap;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7V9C15 10.1 15.9 11 17 11V20C17 21.1 16.1 22 15 22H9C7.9 22 7 21.1 7 20V11C8.1 11 9 10.1 9 9V7H3V9C3 10.1 3.9 11 5 11V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V11C20.1 11 21 10.1 21 9Z"/>
+                </svg>
+                <span class="logo-text">PALA</span>
+            </div>
+
+            <a href="dashboard.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="ai-chat-advocate.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                AI Chat Advocate
+            </a>
+
+            <a href="case-details-with-summary.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Case Details
+            </a>
+
+            <a href="case-timeline.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                Case Timeline
+            </a>
+
+            <a href="strategy-risks.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                </svg>
+                Strategy & Risks
+            </a>
+
+            <a href="document-assistant.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Document Assistant
+            </a>
+
+            <a href="communication-coach.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                Communication Coach
+            </a>
+
+            <a href="private-journal.html" class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                Private Journal
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47z"/>
+                </svg>
+                Resource Finder
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <div class="header-content">
+                    <h1>
+                        <svg class="header-icon" viewBox="0 0 24 24">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                        Private Journal
+                    </h1>
+                    <p>Keep confidential notes and log your thoughts about the case.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" onclick="showExportModal()">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        </svg>
+                        Export Journal
+                    </button>
+                    <button class="header-btn primary" onclick="toggleStatsPanel()">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                        </svg>
+                        View Stats
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics Panel -->
+            <div class="stats-panel" id="statsPanel" style="display: none;">
+                <div class="stats-header">
+                    <svg class="stats-icon" viewBox="0 0 24 24">
+                        <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                    </svg>
+                    <div class="stats-title">Journal Statistics</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalEntries">0</div>
+                        <div class="stat-label">Total Entries</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="thisWeekEntries">0</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="averageLength">0</div>
+                        <div class="stat-label">Avg. Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="longestStreak">0</div>
+                        <div class="stat-label">Longest Streak</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journal Controls -->
+            <div class="journal-controls">
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Search your journal entries..." id="searchInput" oninput="filterEntries()">
+                </div>
+                <div class="filter-controls">
+                    <button class="filter-btn active" onclick="filterByCategory('all')">All</button>
+                    <button class="filter-btn" onclick="filterByCategory('general')">General</button>
+                    <button class="filter-btn" onclick="filterByCategory('meeting')">Meetings</button>
+                    <button class="filter-btn" onclick="filterByCategory('research')">Research</button>
+                    <button class="filter-btn" onclick="filterByCategory('strategy')">Strategy</button>
+                    <button class="filter-btn" onclick="filterByCategory('personal')">Personal</button>
+                </div>
+            </div>
+
+            <!-- New Entry Form -->
+            <div class="new-entry-form">
+                <div class="form-header">
+                    <div class="form-title">New Journal Entry</div>
+                    <button class="form-toggle" onclick="toggleAdvancedOptions()" id="advancedToggle">
+                        Show Advanced Options
+                    </button>
+                </div>
+
+                <div class="entry-metadata" id="advancedOptions" style="display: none;">
+                    <div class="metadata-group">
+                        <label class="metadata-label">Category</label>
+                        <select class="metadata-input metadata-select" id="entryCategory">
+                            <option value="general">General</option>
+                            <option value="meeting">Meeting Notes</option>
+                            <option value="research">Research</option>
+                            <option value="strategy">Strategy</option>
+                            <option value="personal">Personal Thoughts</option>
+                        </select>
+                    </div>
+                    <div class="metadata-group">
+                        <label class="metadata-label">Tags (comma-separated)</label>
+                        <input type="text" class="metadata-input" id="entryTags" placeholder="lawyer, evidence, deadline">
+                    </div>
+                    <div class="metadata-group">
+                        <label class="metadata-label">Related Case Event</label>
+                        <input type="text" class="metadata-input" id="relatedEvent" placeholder="Court hearing, meeting with lawyer">
+                    </div>
+                </div>
+
+                <textarea 
+                    class="entry-textarea" 
+                    id="entryContent"
+                    placeholder="Write your thoughts, notes from calls, or questions to remember..."
+                ></textarea>
+
+                <div class="entry-actions">
+                    <div class="entry-options">
+                        <div class="mood-selector">
+                            <span class="mood-label">Mood:</span>
+                            <div class="mood-option" data-mood="confident" onclick="selectMood('confident')" title="Confident">😊</div>
+                            <div class="mood-option" data-mood="neutral" onclick="selectMood('neutral')" title="Neutral">😐</div>
+                            <div class="mood-option" data-mood="worried" onclick="selectMood('worried')" title="Worried">😟</div>
+                            <div class="mood-option" data-mood="frustrated" onclick="selectMood('frustrated')" title="Frustrated">😤</div>
+                            <div class="mood-option" data-mood="hopeful" onclick="selectMood('hopeful')" title="Hopeful">🤞</div>
+                        </div>
+                        <div class="privacy-toggle">
+                            <input type="checkbox" class="privacy-checkbox" id="isPrivate" checked>
+                            <label class="privacy-label" for="isPrivate">Keep this entry private</label>
+                        </div>
+                    </div>
+                    <button class="add-entry-btn" onclick="addJournalEntry()" id="addEntryBtn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        Add Entry
+                    </button>
+                </div>
+            </div>
+
+            <!-- Journal Entries -->
+            <div class="journal-entries" id="journalEntries">
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <svg class="empty-icon" viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    <h2>Your journal is empty</h2>
+                    <p>Use the form above to add your first private entry. Document your thoughts, meeting notes, and case insights securely.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Export Journal</div>
+                <button class="modal-close" onclick="hideExportModal()">&times;</button>
+            </div>
+            <div class="export-options">
+                <div class="export-option" onclick="exportJournal('pdf')">
+                    <svg class="export-icon" viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                    <div class="export-info">
+                        <div class="export-title">Export as PDF</div>
+                        <div class="export-description">Create a formatted PDF document of all your journal entries</div>
+                    </div>
+                </div>
+                <div class="export-option" onclick="exportJournal('text')">
+                    <svg class="export-icon" viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                    <div class="export-info">
+                        <div class="export-title">Export as Text</div>
+                        <div class="export-description">Download a plain text file with all your entries</div>
+                    </div>
+                </div>
+                <div class="export-option" onclick="exportJournal('backup')">
+                    <svg class="export-icon" viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                    <div class="export-info">
+                        <div class="export-title">Create Backup</div>
+                        <div class="export-description">Export all data including metadata for backup purposes</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Journal entries storage
+        let journalEntries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+        let currentFilter = 'all';
+        let selectedMood = null;
+
+        // Initialize the journal
+        document.addEventListener('DOMContentLoaded', function() {
+            displayEntries();
+            updateStatistics();
+        });
+
+        // Toggle advanced options
+        function toggleAdvancedOptions() {
+            const options = document.getElementById('advancedOptions');
+            const toggle = document.getElementById('advancedToggle');
+            
+            if (options.style.display === 'none') {
+                options.style.display = 'grid';
+                toggle.textContent = 'Hide Advanced Options';
+            } else {
+                options.style.display = 'none';
+                toggle.textContent = 'Show Advanced Options';
+            }
+        }
+
+        // Select mood
+        function selectMood(mood) {
+            // Remove previous selection
+            document.querySelectorAll('.mood-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Select new mood
+            document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
+            selectedMood = mood;
+        }
+
+        // Add journal entry
+        function addJournalEntry() {
+            const content = document.getElementById('entryContent').value.trim();
+            if (!content) {
+                alert('Please write something in your journal entry.');
+                return;
+            }
+
+            const entry = {
+                id: Date.now(),
+                content: content,
+                category: document.getElementById('entryCategory').value,
+                tags: document.getElementById('entryTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+                relatedEvent: document.getElementById('relatedEvent').value.trim(),
+                mood: selectedMood,
+                isPrivate: document.getElementById('isPrivate').checked,
+                timestamp: new Date().toISOString(),
+                wordCount: content.split(/\s+/).length
+            };
+
+            journalEntries.unshift(entry);
+            localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+
+            // Clear form
+            clearForm();
+            
+            // Refresh display
+            displayEntries();
+            updateStatistics();
+
+            // Show success message
+            showNotification('Journal entry added successfully!');
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('entryContent').value = '';
+            document.getElementById('entryCategory').value = 'general';
+            document.getElementById('entryTags').value = '';
+            document.getElementById('relatedEvent').value = '';
+            document.getElementById('isPrivate').checked = true;
+            
+            // Clear mood selection
+            document.querySelectorAll('.mood-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            selectedMood = null;
+        }
+
+        // Display entries
+        function displayEntries() {
+            const container = document.getElementById('journalEntries');
+            const emptyState = document.getElementById('emptyState');
+            
+            let filteredEntries = journalEntries;
+            
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                filteredEntries = filteredEntries.filter(entry => entry.category === currentFilter);
+            }
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (searchTerm) {
+                filteredEntries = filteredEntries.filter(entry => 
+                    entry.content.toLowerCase().includes(searchTerm) ||
+                    entry.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+                    (entry.relatedEvent && entry.relatedEvent.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            if (filteredEntries.length === 0) {
+                emptyState.style.display = 'flex';
+                container.innerHTML = '';
+                container.appendChild(emptyState);
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            container.innerHTML = '';
+            
+            filteredEntries.forEach(entry => {
+                const entryElement = createEntryElement(entry);
+                container.appendChild(entryElement);
+            });
+        }
+
+        // Create entry element
+        function createEntryElement(entry) {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'journal-entry';
+            
+            const date = new Date(entry.timestamp);
+            const formattedDate = date.toLocaleDateString();
+            const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const moodEmoji = {
+                confident: '😊',
+                neutral: '😐',
+                worried: '😟',
+                frustrated: '😤',
+                hopeful: '🤞'
+            };
+            
+            const tagsHtml = entry.tags.map(tag => `<span class="entry-tag">${tag}</span>`).join('');
+            
+            entryDiv.innerHTML = `
+                ${entry.isPrivate ? '<svg class="private-indicator" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>' : ''}
+                <div class="entry-header">
+                    <div class="entry-info">
+                        <div class="entry-date">${formattedDate}</div>
+                        <div class="entry-time">${formattedTime}</div>
+                    </div>
+                    <div class="entry-meta">
+                        <span class="entry-category category-${entry.category}">${entry.category}</span>
+                        ${entry.mood ? `<span class="entry-mood">${moodEmoji[entry.mood]}</span>` : ''}
+                        <div class="entry-actions-menu">
+                            <button class="entry-action-btn" onclick="editEntry(${entry.id})" title="Edit">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                </svg>
+                            </button>
+                            <button class="entry-action-btn" onclick="deleteEntry(${entry.id})" title="Delete">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="entry-content">${entry.content}</div>
+                ${entry.relatedEvent ? `<div style="font-size: 0.875rem; color: #94a3b8; margin-bottom: 1rem;"><strong>Related to:</strong> ${entry.relatedEvent}</div>` : ''}
+                ${tagsHtml ? `<div class="entry-tags">${tagsHtml}</div>` : ''}
+            `;
+            
+            return entryDiv;
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            currentFilter = category;
+            
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayEntries();
+        }
+
+        // Filter entries by search
+        function filterEntries() {
+            displayEntries();
+        }
+
+        // Edit entry
+        function editEntry(entryId) {
+            const entry = journalEntries.find(e => e.id === entryId);
+            if (!entry) return;
+            
+            // Populate form with entry data
+            document.getElementById('entryContent').value = entry.content;
+            document.getElementById('entryCategory').value = entry.category;
+            document.getElementById('entryTags').value = entry.tags.join(', ');
+            document.getElementById('relatedEvent').value = entry.relatedEvent || '';
+            document.getElementById('isPrivate').checked = entry.isPrivate;
+            
+            if (entry.mood) {
+                selectMood(entry.mood);
+            }
+            
+            // Show advanced options if needed
+            if (entry.tags.length > 0 || entry.relatedEvent) {
+                document.getElementById('advancedOptions').style.display = 'grid';
+                document.getElementById('advancedToggle').textContent = 'Hide Advanced Options';
+            }
+            
+            // Change button to update mode
+            const addBtn = document.getElementById('addEntryBtn');
+            addBtn.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24"><path d="M21 7L9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59 21 7z"/></svg>Update Entry';
+            addBtn.onclick = () => updateEntry(entryId);
+            
+            // Scroll to form
+            document.querySelector('.new-entry-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Update entry
+        function updateEntry(entryId) {
+            const content = document.getElementById('entryContent').value.trim();
+            if (!content) {
+                alert('Please write something in your journal entry.');
+                return;
+            }
+            
+            const entryIndex = journalEntries.findIndex(e => e.id === entryId);
+            if (entryIndex === -1) return;
+            
+            // Update entry
+            journalEntries[entryIndex] = {
+                ...journalEntries[entryIndex],
+                content: content,
+                category: document.getElementById('entryCategory').value,
+                tags: document.getElementById('entryTags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+                relatedEvent: document.getElementById('relatedEvent').value.trim(),
+                mood: selectedMood,
+                isPrivate: document.getElementById('isPrivate').checked,
+                wordCount: content.split(/\s+/).length,
+                updatedAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+            
+            // Reset form
+            clearForm();
+            resetAddButton();
+            
+            // Refresh display
+            displayEntries();
+            updateStatistics();
+            
+            showNotification('Journal entry updated successfully!');
+        }
+
+        // Reset add button
+        function resetAddButton() {
+            const addBtn = document.getElementById('addEntryBtn');
+            addBtn.innerHTML = '<svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>Add Entry';
+            addBtn.onclick = addJournalEntry;
+        }
+
+        // Delete entry
+        function deleteEntry(entryId) {
+            if (!confirm('Are you sure you want to delete this journal entry? This action cannot be undone.')) {
+                return;
+            }
+            
+            journalEntries = journalEntries.filter(e => e.id !== entryId);
+            localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+            
+            displayEntries();
+            updateStatistics();
+            
+            showNotification('Journal entry deleted successfully!');
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const totalEntries = journalEntries.length;
+            
+            // This week entries
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const thisWeekEntries = journalEntries.filter(entry => 
+                new Date(entry.timestamp) > oneWeekAgo
+            ).length;
+            
+            // Average word count
+            const totalWords = journalEntries.reduce((sum, entry) => sum + (entry.wordCount || 0), 0);
+            const averageLength = totalEntries > 0 ? Math.round(totalWords / totalEntries) : 0;
+            
+            // Longest streak (simplified calculation)
+            const longestStreak = calculateLongestStreak();
+            
+            document.getElementById('totalEntries').textContent = totalEntries;
+            document.getElementById('thisWeekEntries').textContent = thisWeekEntries;
+            document.getElementById('averageLength').textContent = averageLength;
+            document.getElementById('longestStreak').textContent = longestStreak;
+        }
+
+        // Calculate longest streak
+        function calculateLongestStreak() {
+            if (journalEntries.length === 0) return 0;
+            
+            const dates = journalEntries.map(entry => 
+                new Date(entry.timestamp).toDateString()
+            ).sort();
+            
+            const uniqueDates = [...new Set(dates)];
+            let currentStreak = 1;
+            let longestStreak = 1;
+            
+            for (let i = 1; i < uniqueDates.length; i++) {
+                const prevDate = new Date(uniqueDates[i - 1]);
+                const currentDate = new Date(uniqueDates[i]);
+                const diffTime = Math.abs(currentDate - prevDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 1) {
+                    currentStreak++;
+                    longestStreak = Math.max(longestStreak, currentStreak);
+                } else {
+                    currentStreak = 1;
+                }
+            }
+            
+            return longestStreak;
+        }
+
+        // Toggle stats panel
+        function toggleStatsPanel() {
+            const panel = document.getElementById('statsPanel');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                updateStatistics();
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        // Show export modal
+        function showExportModal() {
+            document.getElementById('exportModal').classList.add('show');
+        }
+
+        // Hide export modal
+        function hideExportModal() {
+            document.getElementById('exportModal').classList.remove('show');
+        }
+
+        // Export journal
+        function exportJournal(format) {
+            if (journalEntries.length === 0) {
+                alert('No journal entries to export.');
+                return;
+            }
+            
+            let content = '';
+            let filename = '';
+            
+            switch (format) {
+                case 'pdf':
+                    alert('PDF export would be implemented with a PDF library. For now, use text export.');
+                    return;
+                    
+                case 'text':
+                    content = generateTextExport();
+                    filename = `journal-export-${new Date().toISOString().split('T')[0]}.txt`;
+                    break;
+                    
+                case 'backup':
+                    content = JSON.stringify(journalEntries, null, 2);
+                    filename = `journal-backup-${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+            }
+            
+            // Create and download file
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            hideExportModal();
+            showNotification(`Journal exported as ${filename}`);
+        }
+
+        // Generate text export
+        function generateTextExport() {
+            let content = 'PRIVATE JOURNAL EXPORT\n';
+            content += '======================\n\n';
+            content += `Exported on: ${new Date().toLocaleString()}\n`;
+            content += `Total entries: ${journalEntries.length}\n\n`;
+            
+            journalEntries.forEach((entry, index) => {
+                const date = new Date(entry.timestamp);
+                content += `ENTRY ${index + 1}\n`;
+                content += `Date: ${date.toLocaleDateString()}\n`;
+                content += `Time: ${date.toLocaleTimeString()}\n`;
+                content += `Category: ${entry.category}\n`;
+                if (entry.mood) content += `Mood: ${entry.mood}\n`;
+                if (entry.tags.length > 0) content += `Tags: ${entry.tags.join(', ')}\n`;
+                if (entry.relatedEvent) content += `Related Event: ${entry.relatedEvent}\n`;
+                content += `Private: ${entry.isPrivate ? 'Yes' : 'No'}\n`;
+                content += `Word Count: ${entry.wordCount}\n`;
+                content += '\nContent:\n';
+                content += entry.content + '\n';
+                content += '\n' + '='.repeat(50) + '\n\n';
+            });
+            
+            return content;
+        }
+
+        // Show notification
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                background-color: #10b981;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                font-size: 0.875rem;
+                font-weight: 600;
+                z-index: 1001;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Auto-save draft functionality
+        let autoSaveTimer;
+        document.getElementById('entryContent').addEventListener('input', function() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                const content = this.value.trim();
+                if (content) {
+                    localStorage.setItem('journalDraft', JSON.stringify({
+                        content: content,
+                        category: document.getElementById('entryCategory').value,
+                        tags: document.getElementById('entryTags').value,
+                        relatedEvent: document.getElementById('relatedEvent').value,
+                        mood: selectedMood,
+                        isPrivate: document.getElementById('isPrivate').checked,
+                        timestamp: new Date().toISOString()
+                    }));
+                }
+            }, 2000);
+        });
+
+        // Load draft on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const draft = localStorage.getItem('journalDraft');
+            if (draft) {
+                const draftData = JSON.parse(draft);
+                const draftAge = new Date() - new Date(draftData.timestamp);
+                
+                // Only load draft if it's less than 24 hours old
+                if (draftAge < 24 * 60 * 60 * 1000) {
+                    if (confirm('You have an unsaved draft. Would you like to restore it?')) {
+                        document.getElementById('entryContent').value = draftData.content;
+                        document.getElementById('entryCategory').value = draftData.category;
+                        document.getElementById('entryTags').value = draftData.tags;
+                        document.getElementById('relatedEvent').value = draftData.relatedEvent;
+                        document.getElementById('isPrivate').checked = draftData.isPrivate;
+                        
+                        if (draftData.mood) {
+                            selectMood(draftData.mood);
+                        }
+                        
+                        // Show advanced options if there's data
+                        if (draftData.tags || draftData.relatedEvent) {
+                            toggleAdvancedOptions();
+                        }
+                    }
+                }
+                
+                // Clear old draft
+                localStorage.removeItem('journalDraft');
+            }
+        });
+
+        // Clear draft when entry is added
+        function clearDraft() {
+            localStorage.removeItem('journalDraft');
+        }
+
+        // Modify addJournalEntry to clear draft
+        const originalAddJournalEntry = addJournalEntry;
+        addJournalEntry = function() {
+            originalAddJournalEntry();
+            clearDraft();
+        };
+
+        // Word count display
+        document.getElementById('entryContent').addEventListener('input', function() {
+            const wordCount = this.value.trim().split(/\s+/).filter(word => word.length > 0).length;
+            
+            // Remove existing word count display
+            const existingCounter = document.querySelector('.word-counter');
+            if (existingCounter) {
+                existingCounter.remove();
+            }
+            
+            // Add word count display
+            if (this.value.trim()) {
+                const counter = document.createElement('div');
+                counter.className = 'word-counter';
+                counter.style.cssText = `
+                    position: absolute;
+                    bottom: 0.5rem;
+                    right: 0.5rem;
+                    font-size: 0.75rem;
+                    color: #94a3b8;
+                    background-color: rgba(15, 23, 42, 0.8);
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 0.25rem;
+                    pointer-events: none;
+                `;
+                counter.textContent = `${wordCount} words`;
+                
+                this.parentNode.style.position = 'relative';
+                this.parentNode.appendChild(counter);
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + Enter to add entry
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                if (document.getElementById('entryContent').value.trim()) {
+                    addJournalEntry();
+                }
+            }
+            
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+            
+            // Escape to clear search
+            if (e.key === 'Escape' && document.activeElement === document.getElementById('searchInput')) {
+                document.getElementById('searchInput').value = '';
+                filterEntries();
+            }
+        });
+
+        // Initialize sample entries for demo
+        if (journalEntries.length === 0) {
+            const sampleEntries = [
+                {
+                    id: Date.now() - 86400000,
+                    content: "Had my first consultation with the lawyer today. She seems very knowledgeable and explained the process clearly. Need to gather more documents for the case file. Feeling cautiously optimistic about the direction we're heading.",
+                    category: "meeting",
+                    tags: ["lawyer", "consultation", "documents"],
+                    relatedEvent: "Initial lawyer consultation",
+                    mood: "hopeful",
+                    isPrivate: true,
+                    timestamp: new Date(Date.now() - 86400000).toISOString(),
+                    wordCount: 42
+                },
+                {
+                    id: Date.now() - 172800000,
+                    content: "Spent the evening researching similar cases online. Found a few precedents that might be relevant to my situation. The legal database search was overwhelming at first, but I'm starting to understand the key issues better.",
+                    category: "research",
+                    tags: ["research", "precedents", "legal database"],
+                    relatedEvent: "",
+                    mood: "neutral",
+                    isPrivate: true,
+                    timestamp: new Date(Date.now() - 172800000).toISOString(),
+                    wordCount: 38
+                }
+            ];
+            
+            journalEntries = sampleEntries;
+            localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+        }
+    </script>
+</body>
+</html>

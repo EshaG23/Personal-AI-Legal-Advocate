@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Advocate - Personal AI Legal Advocate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #1e293b;
+            border-right: 1px solid #334155;
+            padding: 1rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            fill: #06b6d4;
+            margin-right: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background-color: #334155;
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: #1e40af;
+            color: white;
+            border-left-color: #06b6d4;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            fill: currentColor;
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            background-color: #1e40af;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #94a3b8;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem 2rem;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .bot-avatar {
+            background-color: #06b6d4;
+            color: white;
+        }
+
+        .user-avatar {
+            background-color: #1e40af;
+            color: white;
+        }
+
+        .message-content {
+            max-width: 70%;
+            margin: 0 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            line-height: 1.5;
+        }
+
+        .bot-message {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .user-message {
+            background-color: #1e40af;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        .disclaimer {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #f59e0b;
+        }
+
+        /* Chat Input */
+        .chat-input-container {
+            padding: 1rem 2rem 2rem;
+            border-top: 1px solid #334155;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #06b6d4;
+        }
+
+        .chat-input::placeholder {
+            color: #64748b;
+        }
+
+        .send-button {
+            background-color: #06b6d4;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background-color: #0891b2;
+        }
+
+        .send-button:disabled {
+            background-color: #374151;
+            cursor: not-allowed;
+        }
+
+        .send-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            color: #64748b;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .typing-dots {
+            display: inline-flex;
+            margin-left: 0.5rem;
+        }
+
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #64748b;
+            margin: 0 1px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .quick-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .suggestion-chip {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            padding: 0.5rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            background-color: #334155;
+            color: white;
+            border-color: #06b6d4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+
+            .chat-messages {
+                padding: 1rem;
+            }
+
+            .chat-input-container {
+                padding: 1rem;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7V9C15 10.1 15.9 11 17 11V20C17 21.1 16.1 22 15 22H9C7.9 22 7 21.1 7 20V11C8.1 11 9 10.1 9 9V7H3V9C3 10.1 3.9 11 5 11V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V11C20.1 11 21 10.1 21 9Z"/>
+                </svg>
+                <span class="logo-text">PALA</span>
+            </div>
+
+            <a href="dashboard.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="ai-chat-advocate.html" class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                AI Chat Advocate
+            </a>
+
+            <a href="case-details-with-summary.html" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Case Details
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                    <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                Case Timeline
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2.5-9H19v2h-1.5v17.5c0 .83-.67 1.5-1.5 1.5h-9c-.83 0-1.5-.67-1.5-1.5V4H4V2h4.5l1-1h5l1 1H20v2z"/>
+                </svg>
+                Strategy & Risks
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2h6v2H9V4zm3 17c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+                Document Assistant
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+                Communication Coach
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                Private Journal
+            </a>
+
+            <a href="#" class="nav-item">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47z"/>
+                </svg>
+                Resource Finder
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1>AI Chat Advocate</h1>
+                <p>Your 24/7 personal legal guide.</p>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="disclaimer">
+                        <strong>⚠️ Legal Disclaimer:</strong> This AI assistant provides general legal information for educational purposes only and should not be considered as legal advice. Always consult with a qualified attorney for your specific legal situation.
+                    </div>
+
+                    <div class="message">
+                        <div class="message-avatar bot-avatar">PA</div>
+                        <div class="message-content bot-message">
+                            Hello! I'm PALA, your Personal AI Legal Advocate. My purpose is to help you understand legal concepts, procedures, and your rights under Indian law, providing clear, actionable guidance as you navigate the legal system.
+                            <br><br>
+                            Please remember, I am an AI assistant and not a human lawyer. This information is for educational purposes and should not be considered legal advice. It's crucial to consult with a qualified attorney for your specific situation.
+                            <br><br>
+                            How can I assist you with your legal questions today?
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-suggestions" id="quickSuggestions">
+                        <div class="suggestion-chip" onclick="sendSuggestion('What are my rights as a tenant in India?')">Tenant Rights</div>
+                        <div class="suggestion-chip" onclick="sendSuggestion('How to file an FIR?')">File FIR</div>
+                        <div class="suggestion-chip" onclick="sendSuggestion('Consumer protection laws')">Consumer Rights</div>
+                        <div class="suggestion-chip" onclick="sendSuggestion('Marriage and divorce laws')">Family Law</div>
+                        <div class="suggestion-chip" onclick="sendSuggestion('Employment rights in India')">Employment Law</div>
+                        <div class="suggestion-chip" onclick="sendSuggestion('Property disputes')">Property Law</div>
+                    </div>
+
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="message-avatar bot-avatar">PA</div>
+                        <div>PALA is typing
+                            <div class="typing-dots">
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea 
+                            id="chatInput"
+                            class="chat-input"
+                            placeholder="Ask me about Indian legal matters..."
+                            rows="1"
+                        ></textarea>
+                        <button id="sendButton" class="send-button" onclick="sendMessage()">
+                            <svg class="send-icon" viewBox="0 0 24 24">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Legal knowledge base for Indian law
+        const legalKnowledgeBase = {
+            // Tenant Rights
+            'tenant': {
+                keywords: ['tenant', 'rent', 'landlord', 'eviction', 'rental', 'lease'],
+                response: `**Tenant Rights in India:**
+
+🏠 **Key Rights:**
+• Right to peaceful enjoyment of the property
+• Protection against arbitrary rent increases
+• Right to proper notice before eviction (usually 15-30 days)
+• Right to get back security deposit after lease ends
+
+📋 **Important Laws:**
+• **Rent Control Acts** (varies by state)
+• **Transfer of Property Act, 1882**
+• **Indian Contract Act, 1872**
+
+⚖️ **Eviction Protection:**
+• Landlord must provide valid reason for eviction
+• Court order required for forced eviction
+• Tenant can challenge unfair eviction in court
+
+💡 **Tip:** Always have a written rental agreement and keep records of all payments.
+
+Would you like specific information about rent laws in your state?`
+            },
+
+            // FIR Filing
+            'fir': {
+                keywords: ['fir', 'police', 'complaint', 'crime', 'report', 'station'],
+                response: `**How to File an FIR in India:**
+
+📝 **Steps to File FIR:**
+1. **Visit the Police Station** - Go to the nearest police station in your jurisdiction
+2. **Oral or Written Complaint** - You can give oral complaint or write it down
+3. **FIR Registration** - Police must register FIR for cognizable offenses
+4. **Get FIR Copy** - You're entitled to a free copy of the FIR
+
+⚖️ **Legal Rights:**
+• **Section 154 CrPC** - Police must register FIR for cognizable offenses
+• **Zero FIR** - Can file at any police station if crime location is unclear
+• **Online FIR** - Many states allow online FIR filing for certain offenses
+
+🚨 **If Police Refuses:**
+• File complaint with Senior Police Officer
+• Approach Magistrate under Section 156(3) CrPC
+• File petition in High Court
+
+📋 **Required Information:**
+• Date, time, and place of incident
+• Details of the offense
+• Names of accused (if known)
+• Witness details
+
+Need help with a specific type of case?`
+            },
+
+            // Consumer Rights
+            'consumer': {
+                keywords: ['consumer', 'product', 'service', 'defective', 'refund', 'complaint'],
+                response: `**Consumer Protection in India:**
+
+🛡️ **Consumer Rights (Consumer Protection Act, 2019):**
+• **Right to Safety** - Protection against hazardous goods
+• **Right to Information** - Complete product information
+• **Right to Choose** - Access to variety of goods at competitive prices
+• **Right to be Heard** - Voice complaints and get redressal
+• **Right to Redressal** - Compensation for defective goods/services
+• **Right to Education** - Consumer awareness
+
+🏛️ **Consumer Forums:**
+• **District Forum** - Claims up to ₹1 crore
+• **State Commission** - Claims ₹1 crore to ₹10 crore  
+• **National Commission** - Claims above ₹10 crore
+
+📋 **How to File Complaint:**
+1. File within 2 years of cause of action
+2. Pay prescribed fee
+3. Provide evidence (bills, receipts, photos)
+4. Attend hearings
+
+💰 **Remedies Available:**
+• Refund of money paid
+• Replacement of defective goods
+• Compensation for damages
+• Discontinuation of unfair trade practices
+
+Need help filing a consumer complaint?`
+            },
+
+            // Family Law
+            'marriage': {
+                keywords: ['marriage', 'divorce', 'family', 'wife', 'husband', 'child', 'custody', 'alimony'],
+                response: `**Marriage and Family Laws in India:**
+
+💒 **Marriage Laws:**
+• **Hindu Marriage Act, 1955** - For Hindus, Buddhists, Sikhs, Jains
+• **Indian Christian Marriage Act, 1872** - For Christians
+• **Muslim Personal Law** - For Muslims
+• **Special Marriage Act, 1954** - Inter-religious marriages
+
+⚖️ **Divorce Grounds:**
+• **Mutual Consent** - Both parties agree (fastest method)
+• **Contested Divorce** - Cruelty, desertion, adultery, mental illness
+
+👶 **Child Custody:**
+• **Best Interest of Child** principle applies
+• Mother usually gets custody of children under 5 years
+• Court considers child's preference (if above 9 years)
+
+💰 **Maintenance/Alimony:**
+• **Section 125 CrPC** - Maintenance for wife and children
+• **Hindu Marriage Act** - Permanent alimony provisions
+• Amount depends on husband's income and wife's needs
+
+🏠 **Property Rights:**
+• Wife has right to live in matrimonial home
+• Equal share in joint property
+• Streedhan (gifts to wife) belongs exclusively to her
+
+Would you like specific information about divorce procedures or maintenance calculations?`
+            },
+
+            // Employment Law
+            'employment': {
+                keywords: ['job', 'work', 'employee', 'salary', 'termination', 'workplace', 'harassment'],
+                response: `**Employment Rights in India:**
+
+💼 **Key Employment Laws:**
+• **Industrial Disputes Act, 1947**
+• **Payment of Wages Act, 1936**
+• **Employees' Provident Fund Act, 1952**
+• **Sexual Harassment of Women at Workplace Act, 2013**
+
+⚖️ **Employee Rights:**
+• **Minimum Wages** - As per state government notification
+• **Timely Payment** - Wages must be paid by 7th of next month
+• **PF & ESI Benefits** - For establishments with 20+ employees
+• **Notice Period** - Proper notice before termination
+
+🚫 **Protection Against:**
+• **Unfair Termination** - Without proper cause or procedure
+• **Sexual Harassment** - Internal Committee must investigate
+• **Discrimination** - Based on gender, religion, caste
+• **Wage Theft** - Delayed or non-payment of wages
+
+📋 **Complaint Mechanisms:**
+• **Labour Commissioner** - For wage and working condition issues
+• **Internal Committee** - For sexual harassment cases
+• **Industrial Tribunal** - For termination disputes
+• **Labour Court** - For various employment disputes
+
+💡 **Documentation:**
+• Keep copies of appointment letter, salary slips
+• Maintain record of working hours
+• Document any harassment incidents
+
+Need help with a specific workplace issue?`
+            },
+
+            // Property Law
+            'property': {
+                keywords: ['property', 'land', 'house', 'dispute', 'ownership', 'title', 'registration'],
+                response: `**Property Laws in India:**
+
+🏠 **Key Property Laws:**
+• **Transfer of Property Act, 1882**
+• **Registration Act, 1908**
+• **Indian Stamp Act, 1899**
+• **Real Estate (Regulation and Development) Act, 2016**
+
+📋 **Property Documents:**
+• **Sale Deed** - Proof of ownership transfer
+• **Title Deed** - Establishes ownership
+• **Encumbrance Certificate** - Shows property transaction history
+• **Khata/Pahani** - Revenue records
+
+⚖️ **Common Property Disputes:**
+• **Title Disputes** - Conflicting ownership claims
+• **Boundary Disputes** - Property line disagreements
+• **Partition Suits** - Division of joint family property
+• **Adverse Possession** - Unauthorized occupation claims
+
+🔍 **Due Diligence Before Buying:**
+• Verify clear title with no disputes
+• Check approved building plans
+• Ensure proper registration and stamp duty payment
+• Verify property tax payments
+
+💰 **Registration Process:**
+• Pay stamp duty (varies by state: 3-10% of property value)
+• Register within 4 months of execution
+• Both parties must be present with witnesses
+• Get registered sale deed
+
+🏛️ **Legal Remedies:**
+• **Civil Court** - For title and possession disputes
+• **Revenue Court** - For land revenue matters
+• **Consumer Forum** - For builder disputes (RERA)
+
+Need help with a specific property matter?`
+            },
+
+            // General Legal Help
+            'legal': {
+                keywords: ['legal', 'law', 'court', 'lawyer', 'advocate', 'case', 'help'],
+                response: `**General Legal Guidance in India:**
+
+🏛️ **Indian Legal System:**
+• **Supreme Court** - Highest court of appeal
+• **High Courts** - State-level appellate courts
+• **District Courts** - Trial courts for civil and criminal matters
+• **Specialized Courts** - Family, consumer, labor courts
+
+⚖️ **Types of Law:**
+• **Criminal Law** - IPC, CrPC (crimes against society)
+• **Civil Law** - CPC, contracts, property disputes
+• **Constitutional Law** - Fundamental rights and duties
+• **Personal Laws** - Marriage, inheritance, family matters
+
+💡 **Legal Aid:**
+• **Free Legal Aid** - Available for those earning less than ₹9,000/month
+• **Lok Adalat** - Alternative dispute resolution
+• **Legal Services Authority** - Provides free legal assistance
+• **Pro Bono Services** - Free services by lawyers
+
+📞 **Emergency Legal Helplines:**
+• **National Legal Services Authority**: 15100
+• **Women Helpline**: 1091
+• **Child Helpline**: 1098
+• **Senior Citizen Helpline**: 14567
+
+📋 **When to Consult a Lawyer:**
+• Before signing important contracts
+• When facing criminal charges
+• For property transactions
+• In case of family disputes
+• For business legal matters
+
+Would you like information about a specific area of law?`
+            }
+        };
+
+        // Chat functionality
+        let messageHistory = [];
+
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString('en-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+
+        function addMessage(content, isUser = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : ''}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `message-avatar ${isUser ? 'user-avatar' : 'bot-avatar'}`;
+            avatar.textContent = isUser ? 'U' : 'PA';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = `message-content ${isUser ? 'user-message' : 'bot-message'}`;
+            messageContent.innerHTML = content + `<div class="message-time">${getCurrentTime()}</div>`;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            
+            // Insert before typing indicator
+            const typingIndicator = document.getElementById('typingIndicator');
+            messagesContainer.insertBefore(messageDiv, typingIndicator);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Store in history
+            messageHistory.push({
+                content: content,
+                isUser: isUser,
+                timestamp: new Date()
+            });
+        }
+
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'flex';
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        function findBestResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            let bestMatch = null;
+            let maxMatches = 0;
+
+            for (const [category, data] of Object.entries(legalKnowledgeBase)) {
+                const matches = data.keywords.filter(keyword => 
+                    message.includes(keyword.toLowerCase())
+                ).length;
+
+                if (matches > maxMatches) {
+                    maxMatches = matches;
+                    bestMatch = data;
+                }
+            }
+
+            if (bestMatch && maxMatches > 0) {
+                return bestMatch.response;
+            }
+
+            // Default response for unmatched queries
+            return `I understand you're looking for legal information. While I can help with many areas of Indian law including:
+
+• **Tenant and Property Rights**
+• **Criminal Law (FIR filing, etc.)**
+• **Consumer Protection**
+• **Family and Marriage Law**
+• **Employment Rights**
+• **General Legal Procedures**
+
+Could you please be more specific about your legal question? For example:
+- "How do I file an FIR?"
+- "What are my rights as a tenant?"
+- "How to file a consumer complaint?"
+
+This will help me provide you with more accurate and helpful information.
+
+**Remember:** This is general information only. Please consult with a qualified lawyer for advice specific to your situation.`;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, true);
+            input.value = '';
+            
+            // Hide suggestions after first message
+            const suggestions = document.getElementById('quickSuggestions');
+            if (suggestions) {
+                suggestions.style.display = 'none';
+            }
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate AI response delay
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = findBestResponse(message);
+                addMessage(response);
+            }, 1500 + Math.random() * 1000); // 1.5-2.5 second delay
+        }
+
+        function sendSuggestion(suggestion) {
+            document.getElementById('chatInput').value = suggestion;
+            sendMessage();
+        }
+
+        // Event listeners
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Initialize chat
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('PALA Legal AI Chatbot initialized');
+        });
+    </script>
+</body>
+</html>
